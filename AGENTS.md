@@ -41,6 +41,8 @@ styles.css
 data.js
 app.js
 assets/
+  cs-thesis-roadmap-ai.png
+  llm-roadmap-ai-labeled.png
   llm-roadmap-ai.png
   llm-learning-ai.png
   llm-learning-map.svg
@@ -315,16 +317,17 @@ This is intentionally simple and transparent.
 Current active sidebar image:
 
 ```text
-assets/llm-roadmap-ai-labeled.png
+assets/cs-thesis-roadmap-ai.png
 ```
 
 Description:
 - AI-generated roadmap-style image.
-- Six labeled milestones: Tokens, Transformer, Prompting, RAG, Evaluation, Thesis.
+- Main CS thesis roadmap covering LLM, Data Lake, Blockchain Consensus, Quiz, and Thesis.
 
 Previous or unused assets:
 
 ```text
+assets/llm-roadmap-ai-labeled.png
 assets/llm-roadmap-ai.png
 assets/llm-learning-ai.png
 assets/llm-learning-map.svg
