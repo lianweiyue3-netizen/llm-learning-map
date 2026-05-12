@@ -110,6 +110,7 @@ http://127.0.0.1:5173/
 ├── AGENTS.md
 ├── README.md
 └── assets/
+    ├── cs-thesis-roadmap-ai-v2.png
     ├── cs-thesis-roadmap-ai.png
     ├── llm-roadmap-ai-labeled.png
     ├── llm-roadmap-ai.png

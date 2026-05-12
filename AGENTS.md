@@ -41,6 +41,7 @@ styles.css
 data.js
 app.js
 assets/
+  cs-thesis-roadmap-ai-v2.png
   cs-thesis-roadmap-ai.png
   llm-roadmap-ai-labeled.png
   llm-roadmap-ai.png
@@ -317,16 +318,17 @@ This is intentionally simple and transparent.
 Current active sidebar image:
 
 ```text
-assets/cs-thesis-roadmap-ai.png
+assets/cs-thesis-roadmap-ai-v2.png
 ```
 
 Description:
 - AI-generated roadmap-style image.
-- Main CS thesis roadmap covering LLM, Data Lake, Blockchain Consensus, Quiz, and Thesis.
+- Main CS thesis roadmap with a neutral CS Topics start branching equally into LLM, Data Lake, and Blockchain Consensus, then Quiz and Thesis.
 
 Previous or unused assets:
 
 ```text
+assets/cs-thesis-roadmap-ai.png
 assets/llm-roadmap-ai-labeled.png
 assets/llm-roadmap-ai.png
 assets/llm-learning-ai.png
