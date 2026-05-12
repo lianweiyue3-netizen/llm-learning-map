@@ -170,6 +170,7 @@ http://127.0.0.1:5173/
 ├── AGENTS.md
 ├── README.md
 └── assets/
+    ├── llm-roadmap-ai-labeled.png
     ├── llm-roadmap-ai.png
     ├── llm-learning-ai.png
     └── llm-learning-map.svg
@@ -303,4 +304,3 @@ https://github.com/lianweiyue3-netizen/llm-learning-map
 学習トラッカー、クイズ、ミニ実験、復習、メモ、論文ビルダーを実装済み。
 GitHubにpush済み。
 ```
-

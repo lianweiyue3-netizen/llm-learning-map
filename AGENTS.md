@@ -269,16 +269,17 @@ This is intentionally simple and transparent.
 Current active sidebar image:
 
 ```text
-assets/llm-roadmap-ai.png
+assets/llm-roadmap-ai-labeled.png
 ```
 
 Description:
 - AI-generated roadmap-style image.
-- Six milestones: tokens, transformers, prompting, retrieval, evaluation, thesis writing.
+- Six labeled milestones: Tokens, Transformer, Prompting, RAG, Evaluation, Thesis.
 
 Previous or unused assets:
 
 ```text
+assets/llm-roadmap-ai.png
 assets/llm-learning-ai.png
 assets/llm-learning-map.svg
 ```
@@ -390,4 +391,3 @@ Core learning tracker complete.
 Thesis-prep features added.
 Ready for daily use.
 ```
-
