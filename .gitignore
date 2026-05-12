@@ -1,0 +1,11 @@
+# Local preview screenshots and review artifacts
+/*.png
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependency folders, if the project is extended later
+node_modules/
+

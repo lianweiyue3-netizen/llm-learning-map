@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LLM Thesis Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Learning tracker summary">
+        <div class="brand-block">
+          <p class="eyebrow">10 minutes a day</p>
+          <h1>LLM Thesis Tracker</h1>
+          <p class="subtitle">A gentle path from zero knowledge to a small thesis proposal.</p>
+        </div>
+
+        <img class="stack-visual" src="assets/llm-roadmap-ai.png" alt="AI-generated roadmap illustration with six milestones for tokens, transformers, prompting, retrieval, evaluation, and thesis writing">
+
+        <div class="stats-grid" aria-label="Progress statistics">
+          <div>
+            <span id="completedCount">0</span>
+            <small>lessons done</small>
+          </div>
+          <div>
+            <span id="streakCount">0</span>
+            <small>day streak</small>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>Course progress</span>
+            <strong id="progressPercent">0%</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+
+        <button id="resetButton" class="ghost-button" type="button">Reset tracker</button>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Today</p>
+            <h2 id="todayTitle">Loading lesson...</h2>
+          </div>
+          <div class="date-pill" id="datePill">Day 1</div>
+        </header>
+
+        <nav class="tabs" aria-label="Tracker sections">
+          <button class="tab-button is-active" type="button" data-view="today">Today</button>
+          <button class="tab-button" type="button" data-view="roadmap">Roadmap</button>
+          <button class="tab-button" type="button" data-view="themes">Thesis テーマ</button>
+          <button class="tab-button" type="button" data-view="library">Library</button>
+          <button class="tab-button" type="button" data-view="builder">Builder</button>
+          <button class="tab-button" type="button" data-view="notes">Notes</button>
+        </nav>
+
+        <section id="todayView" class="view is-active" aria-labelledby="todayTitle">
+          <div class="today-layout">
+            <article class="lesson-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow" id="lessonWeek">Week 1</p>
+                  <h3 id="lessonTitle">What is an LLM?</h3>
+                </div>
+                <span id="lessonStatus" class="status-badge">Not done</span>
+              </div>
+
+              <p id="lessonFocus" class="lesson-focus"></p>
+
+              <section class="study-panel" aria-label="Study material">
+                <div class="study-heading">
+                  <span>Study material</span>
+                  <strong>Read this first</strong>
+                </div>
+                <div id="studyText" class="study-text"></div>
+                <div class="study-grid">
+                  <div>
+                    <h4>Key terms</h4>
+                    <ul id="studyTerms"></ul>
+                  </div>
+                  <div>
+                    <h4>CS angle</h4>
+                    <p id="studyCsAngle"></p>
+                  </div>
+                </div>
+              </section>
+
+              <div class="time-grid">
+                <div>
+                  <strong>2 min</strong>
+                  <span id="learnStep">Read the concept.</span>
+                </div>
+                <div>
+                  <strong>5 min</strong>
+                  <span id="practiceStep">Do the small task.</span>
+                </div>
+                <div>
+                  <strong>3 min</strong>
+                  <span id="thesisStep">Write one thesis note.</span>
+                </div>
+              </div>
+
+              <section class="lab-panel" aria-label="Mini CS lab">
+                <div class="lab-heading">
+                  <span>Mini CS lab</span>
+                  <strong id="labTime">3-5 min</strong>
+                </div>
+                <h4 id="labTitle"></h4>
+                <ol id="labSteps"></ol>
+              </section>
+
+              <section class="quiz-panel" aria-label="Mini quiz">
+                <div class="quiz-heading">
+                  <span>Mini quiz</span>
+                  <strong id="quizStatus">Not answered</strong>
+                </div>
+                <p id="quizQuestion"></p>
+                <div id="quizChoices" class="quiz-choices"></div>
+                <p id="quizFeedback" class="quiz-feedback" aria-live="polite"></p>
+              </section>
+
+              <section class="review-panel" aria-label="Review queue">
+                <div class="review-heading">
+                  <span>Review queue</span>
+                  <strong id="reviewStatus">No review yet</strong>
+                </div>
+                <div id="reviewList" class="review-list"></div>
+              </section>
+
+              <section class="checklist-panel" aria-label="Daily completion checklist">
+                <div class="checklist-heading">
+                  <span>Daily checklist</span>
+                  <strong id="checklistStatus">0/3 ready</strong>
+                </div>
+                <label class="check-item">
+                  <input id="studyReadCheck" type="checkbox">
+                  <span>I read the study material</span>
+                </label>
+                <div class="check-item" id="quizCheckItem">
+                  <span class="check-dot" aria-hidden="true"></span>
+                  <span>Quiz answered correctly</span>
+                </div>
+                <div class="check-item" id="noteCheckItem">
+                  <span class="check-dot" aria-hidden="true"></span>
+                  <span>Daily note has at least 2 sentences</span>
+                </div>
+                <p id="completionHint" class="completion-hint">Complete the checklist before marking today done.</p>
+              </section>
+
+              <div class="action-row">
+                <a id="lessonResource" class="resource-link" href="#" target="_blank" rel="noreferrer">Open reading</a>
+                <button id="completeButton" class="primary-button" type="button">Mark done</button>
+              </div>
+            </article>
+
+            <section class="note-panel" aria-label="Daily thesis note">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Daily note</p>
+                  <h3>Build your thesis brain</h3>
+                </div>
+              </div>
+              <label for="dailyNote">Write 2-3 sentences. Tiny notes become your literature review later.</label>
+              <textarea id="dailyNote" rows="9" placeholder="Example: Today I learned that LLMs predict tokens, not truth. A possible thesis question is..."></textarea>
+              <p id="saveStatus" class="save-status">Autosaves in this browser.</p>
+            </section>
+          </div>
+        </section>
+
+        <section id="roadmapView" class="view" aria-labelledby="roadmapHeading">
+          <div class="section-heading">
+            <p class="eyebrow">42 day path</p>
+            <h2 id="roadmapHeading">From scratch to thesis proposal</h2>
+          </div>
+          <div id="roadmapList" class="roadmap-list"></div>
+        </section>
+
+        <section id="themesView" class="view" aria-labelledby="themesHeading">
+          <div class="section-heading">
+            <p class="eyebrow">Pick something manageable</p>
+            <h2 id="themesHeading">CS thesis テーマ ideas</h2>
+            <p>Model and algorithm focused, but still beginner-friendly: small dataset, clear metric, simple comparison.</p>
+          </div>
+          <div class="filter-row" role="group" aria-label="Theme filters">
+            <button class="filter-button is-active" type="button" data-filter="all">All</button>
+            <button class="filter-button" type="button" data-filter="beginner">Beginner</button>
+            <button class="filter-button" type="button" data-filter="rag">RAG</button>
+            <button class="filter-button" type="button" data-filter="prompting">Prompting</button>
+            <button class="filter-button" type="button" data-filter="code">Code</button>
+            <button class="filter-button" type="button" data-filter="models">Models</button>
+            <button class="filter-button" type="button" data-filter="evaluation">Evaluation</button>
+            <button class="filter-button" type="button" data-filter="japanese">Japanese</button>
+          </div>
+          <div id="themeList" class="theme-list"></div>
+        </section>
+
+        <section id="libraryView" class="view" aria-labelledby="libraryHeading">
+          <div class="section-heading">
+            <p class="eyebrow">Foundation links</p>
+            <h2 id="libraryHeading">CS thesis library</h2>
+            <p>Already-written theses and core algorithm papers for RAG, model comparison, prompting, code generation, and fine-tuning.</p>
+          </div>
+          <div id="libraryList" class="library-list"></div>
+        </section>
+
+        <section id="builderView" class="view" aria-labelledby="builderHeading">
+          <div class="section-heading">
+            <p class="eyebrow">Turn learning into a proposal</p>
+            <h2 id="builderHeading">Thesis Builder</h2>
+            <p>Draft a small CS thesis proposal while you learn. Everything autosaves in this browser.</p>
+          </div>
+
+          <div class="builder-layout">
+            <form id="thesisForm" class="builder-form">
+              <label>
+                Working title
+                <input id="builderTitle" type="text" placeholder="Example: Comparing RAG chunk sizes for course Q&A">
+              </label>
+              <label>
+                Research question
+                <textarea id="builderQuestion" rows="3" placeholder="How does changing X affect Y on task Z?"></textarea>
+              </label>
+              <label>
+                Model / algorithm
+                <input id="builderAlgorithm" type="text" placeholder="RAG, BM25, embeddings, LoRA, BERT, prompting...">
+              </label>
+              <label>
+                Dataset / material
+                <input id="builderDataset" type="text" placeholder="30 course FAQ questions, 50 code snippets, public dataset...">
+              </label>
+              <label>
+                Evaluation metric
+                <input id="builderMetric" type="text" placeholder="accuracy, F1, recall@k, hallucination rate, coverage...">
+              </label>
+              <label>
+                Expected contribution
+                <textarea id="builderContribution" rows="3" placeholder="This thesis will show..."></textarea>
+              </label>
+              <label>
+                Limitations / risks
+                <textarea id="builderLimitations" rows="3" placeholder="Small dataset, model version changes, subjective scoring..."></textarea>
+              </label>
+              <div class="action-row">
+                <button id="exportProposalButton" class="primary-button" type="button">Download proposal</button>
+              </div>
+            </form>
+
+            <aside class="readiness-panel" aria-label="Thesis readiness score">
+              <div class="readiness-score">
+                <span id="readinessScore">0%</span>
+                <p>thesis readiness</p>
+              </div>
+              <div id="readinessList" class="readiness-list"></div>
+              <div class="recommendation-box">
+                <h3>Recommended easy direction</h3>
+                <p id="themeRecommendation"></p>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="notesView" class="view" aria-labelledby="notesHeading">
+          <div class="section-heading">
+            <p class="eyebrow">Your writing trail</p>
+            <h2 id="notesHeading">Saved notes</h2>
+          </div>
+          <div class="export-row">
+            <button id="exportButton" class="secondary-button" type="button">Download notes</button>
+          </div>
+          <div id="notesList" class="notes-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

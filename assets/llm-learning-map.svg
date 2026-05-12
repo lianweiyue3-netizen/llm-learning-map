@@ -1,0 +1,42 @@
+<svg width="720" height="430" viewBox="0 0 720 430" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">LLM learning map</title>
+  <desc id="desc">A visual learning map connecting tokens, model training, alignment, retrieval, evaluation, and thesis writing.</desc>
+  <rect width="720" height="430" rx="24" fill="#FBFAF7"/>
+  <rect x="28" y="28" width="664" height="374" rx="18" fill="#FFFFFF" stroke="#DCE3E8" stroke-width="2"/>
+  <path d="M94 216H626" stroke="#C9D6DD" stroke-width="4" stroke-linecap="round"/>
+  <path d="M104 216C138 136 194 96 272 96C348 96 394 158 432 216C472 276 520 334 616 316" stroke="#087F8C" stroke-width="7" stroke-linecap="round"/>
+  <path d="M104 216C154 270 214 300 282 292C350 284 382 240 432 216C484 190 544 178 616 128" stroke="#D85845" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+  <g>
+    <rect x="70" y="176" width="120" height="80" rx="14" fill="#EDF5F6" stroke="#B9D9DD"/>
+    <text x="130" y="208" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700" fill="#055963">Tokens</text>
+    <text x="130" y="232" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" fill="#617080">text pieces</text>
+  </g>
+  <g>
+    <rect x="224" y="58" width="128" height="82" rx="14" fill="#F5EFE2" stroke="#E2C984"/>
+    <text x="288" y="91" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700" fill="#7D5914">Training</text>
+    <text x="288" y="115" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" fill="#617080">predict next</text>
+  </g>
+  <g>
+    <rect x="372" y="176" width="128" height="82" rx="14" fill="#F1F2FA" stroke="#C8D0F0"/>
+    <text x="436" y="208" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700" fill="#4C5FB7">Alignment</text>
+    <text x="436" y="232" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" fill="#617080">helpful output</text>
+  </g>
+  <g>
+    <rect x="548" y="86" width="104" height="84" rx="14" fill="#FCEFED" stroke="#F0C0B8"/>
+    <text x="600" y="119" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700" fill="#A13B2D">RAG</text>
+    <text x="600" y="143" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" fill="#617080">sources</text>
+  </g>
+  <g>
+    <rect x="536" y="278" width="112" height="82" rx="14" fill="#EEF7F2" stroke="#BEDDCE"/>
+    <text x="592" y="311" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700" fill="#22845E">Thesis</text>
+    <text x="592" y="335" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" fill="#617080">question</text>
+  </g>
+  <g fill="#17202A">
+    <circle cx="104" cy="216" r="8"/>
+    <circle cx="288" cy="96" r="8"/>
+    <circle cx="436" cy="216" r="8"/>
+    <circle cx="600" cy="128" r="8"/>
+    <circle cx="592" cy="316" r="8"/>
+  </g>
+  <text x="56" y="372" font-family="Inter, Arial, sans-serif" font-size="13" fill="#617080">Daily loop: learn a concept, test it with a tiny task, then write one thesis note.</text>
+</svg>
