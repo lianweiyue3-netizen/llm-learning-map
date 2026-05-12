@@ -117,8 +117,8 @@ Main exported globals:
 
 Current learning path:
 - LLM: 42 lessons over 6 weeks.
-- Data Lake: 14 lessons over 2 weeks.
-- Blockchain Consensus: 14 lessons over 2 weeks.
+- Data Lake: 28 lessons over 4 weeks.
+- Blockchain Consensus: 35 lessons over 5 weeks.
 - 10-minute structure per lesson.
 
 Theme focus:

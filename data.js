@@ -468,7 +468,7 @@ const categoryTracks = [
     id: "llm",
     title: "Large Language Model",
     shortTitle: "LLM",
-    level: "Current daily tracker",
+    level: "42 days | medium",
     summary: "Study how language models tokenize text, use transformers, retrieve documents, and get evaluated. This is the main 42-day path already built into the app.",
     concepts: ["tokens", "embeddings", "transformer", "prompting", "RAG", "evaluation"],
     path: [
@@ -503,8 +503,8 @@ const categoryTracks = [
     id: "data-lake",
     title: "Data Lake",
     shortTitle: "Data Lake",
-    level: "Easy systems thesis",
-    summary: "Study how organizations store raw and processed data for analytics. The CS angle is file formats, metadata, partitioning, query performance, and data quality.",
+    level: "28 days | easier",
+    summary: "Study how organizations store raw and processed data for analytics. This track is shorter than LLM because the beginner thesis scope can stay practical: file formats, metadata, partitioning, query performance, and data quality.",
     concepts: ["object storage", "Parquet", "schema evolution", "partitioning", "metadata catalog", "lakehouse"],
     path: [
       "Learn the difference between database, data warehouse, and data lake.",
@@ -513,7 +513,7 @@ const categoryTracks = [
       "Compare table formats such as Delta Lake and Apache Iceberg.",
       "Pick one small dataset and design two storage layouts.",
       "Measure query time, file count, or storage size.",
-      "Write limitations: data volume, local machine, and tool versions."
+      "Build toward a small 28-day thesis plan with one dataset, one design variable, and one metric."
     ],
     thesisIdeas: [
       "Partition strategy comparison for student activity logs stored as Parquet.",
@@ -541,8 +541,8 @@ const categoryTracks = [
     id: "blockchain-consensus",
     title: "Blockchain Consensus",
     shortTitle: "Consensus",
-    level: "Easy distributed systems thesis",
-    summary: "Study how distributed nodes agree on one shared history even when messages are delayed or some nodes fail. The CS angle is safety, liveness, fault models, and performance tradeoffs.",
+    level: "35 days | harder",
+    summary: "Study how distributed nodes agree on one shared history even when messages are delayed or some nodes fail. This track is longer than Data Lake because safety, liveness, BFT, finality, and simulation need slower buildup.",
     concepts: ["blocks", "forks", "safety", "liveness", "PoW", "PoS", "BFT"],
     path: [
       "Start with why distributed systems need consensus.",
@@ -551,7 +551,7 @@ const categoryTracks = [
       "Read the basic idea of Byzantine fault tolerance.",
       "Simulate a small voting or leader-based consensus process.",
       "Measure latency, number of messages, or failure tolerance.",
-      "Write tradeoffs: energy, decentralization, throughput, and security."
+      "Build toward a 35-day simulation or comparison thesis with clear assumptions and measurable tradeoffs."
     ],
     thesisIdeas: [
       "Beginner simulation of PoW difficulty versus block confirmation time.",
@@ -2139,6 +2139,535 @@ const blockchainConsensusQuizzes = {
     explanation: "These metrics connect to consensus performance and correctness."
   }
 };
+
+dataLakeLessons.push(
+  {
+    id: 15,
+    week: "Week 3: Query and optimization",
+    title: "SQL over files",
+    focus: "Query engines can read lake files and expose them like tables. The engine relies on metadata, schema, and file format to avoid scanning everything.",
+    learn: "Learn why a query engine needs table metadata.",
+    practice: "Write one SQL question over a folder of event logs.",
+    thesis: "Write how SQL over files differs from SQL over a database table.",
+    resource: "Apache Iceberg documentation",
+    url: "https://iceberg.apache.org/docs/latest/"
+  },
+  {
+    id: 16,
+    week: "Week 3: Query and optimization",
+    title: "Predicate pushdown",
+    focus: "Predicate pushdown means filters are applied as early as possible so the system reads less data.",
+    learn: "Study how a where clause can reduce scanned files or row groups.",
+    practice: "Pick a query filter and decide what data can be skipped.",
+    thesis: "Write a question about whether file format affects filter performance.",
+    resource: "Apache Parquet documentation",
+    url: "https://parquet.apache.org/docs/"
+  },
+  {
+    id: 17,
+    week: "Week 3: Query and optimization",
+    title: "The small files problem",
+    focus: "Many tiny files can make queries slow because the engine pays overhead for listing, opening, and planning each file.",
+    learn: "Learn why file count matters, not only total data size.",
+    practice: "Compare 10 large files with 1000 tiny files for the same data.",
+    thesis: "Write a thesis idea about file size and query time.",
+    resource: "Delta Lake optimization",
+    url: "https://docs.delta.io/latest/optimizations-oss.html"
+  },
+  {
+    id: 18,
+    week: "Week 3: Query and optimization",
+    title: "Compaction",
+    focus: "Compaction rewrites many small files into fewer larger files. It can improve query performance but costs time and compute.",
+    learn: "Study why compaction is a maintenance operation.",
+    practice: "Write when you would compact a dataset.",
+    thesis: "Write a variable: compacted vs not compacted.",
+    resource: "Delta Lake optimization",
+    url: "https://docs.delta.io/latest/optimizations-oss.html"
+  },
+  {
+    id: 19,
+    week: "Week 3: Query and optimization",
+    title: "Statistics and pruning",
+    focus: "Table formats can store statistics such as min and max values. Query engines use these statistics to skip files that cannot match a filter.",
+    learn: "Learn min/max statistics at a high level.",
+    practice: "For ages 18-22 in a file, decide if a query age > 50 should scan it.",
+    thesis: "Write how metadata statistics can improve query planning.",
+    resource: "Apache Iceberg performance",
+    url: "https://iceberg.apache.org/docs/latest/performance/"
+  },
+  {
+    id: 20,
+    week: "Week 3: Query and optimization",
+    title: "Cost and reproducibility",
+    focus: "A data lake experiment should track tool version, local machine, dataset size, and repeated runs. Otherwise query timing results are hard to trust.",
+    learn: "Study why reproducible performance testing needs controlled conditions.",
+    practice: "Write a small experiment log template.",
+    thesis: "Write two threats to validity for a performance thesis.",
+    resource: "Apache Iceberg performance",
+    url: "https://iceberg.apache.org/docs/latest/performance/"
+  },
+  {
+    id: 21,
+    week: "Week 3: Query and optimization",
+    title: "Optimization checkpoint",
+    focus: "You now know the main performance variables: file format, partitioning, file count, compaction, statistics, and query workload.",
+    learn: "Review days 15-20.",
+    practice: "Pick two optimization variables and reject one as too large for your thesis.",
+    thesis: "Choose one Data Lake experiment variable.",
+    resource: "Delta Lake documentation",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    id: 22,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Choose a small dataset",
+    focus: "A practical Data Lake thesis can use a small public dataset or a generated dataset. The key is having repeatable data and meaningful queries.",
+    learn: "Learn what makes a dataset thesis-friendly.",
+    practice: "Pick one dataset shape: logs, transactions, sensor readings, or student records.",
+    thesis: "Write dataset, columns, size, and source.",
+    resource: "Apache Parquet documentation",
+    url: "https://parquet.apache.org/docs/"
+  },
+  {
+    id: 23,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Build a baseline",
+    focus: "A baseline is the simple version you compare against. For Data Lake, it might be CSV, unpartitioned Parquet, or no quality checks.",
+    learn: "Study why experiments need a baseline.",
+    practice: "Write baseline vs improved design for your dataset.",
+    thesis: "Write: I compare baseline X against improved Y.",
+    resource: "Apache Iceberg documentation",
+    url: "https://iceberg.apache.org/docs/latest/"
+  },
+  {
+    id: 24,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Choose metrics",
+    focus: "Good Data Lake metrics are concrete: query time, bytes scanned, number of files, storage size, failed quality checks, or reproducibility steps.",
+    learn: "Choose one speed metric and one reliability metric.",
+    practice: "Create a two-column metric table.",
+    thesis: "Write why each metric answers your question.",
+    resource: "Delta Lake documentation",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    id: 25,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Error analysis for data quality",
+    focus: "If your thesis studies data quality, error analysis means classifying bad records and explaining which rules caught or missed them.",
+    learn: "Study false positive and false negative at a high level.",
+    practice: "Invent five bad records and decide which rule catches each.",
+    thesis: "Write an error category list.",
+    resource: "Delta Lake constraints",
+    url: "https://docs.delta.io/latest/delta-constraints.html"
+  },
+  {
+    id: 26,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Compare table formats carefully",
+    focus: "Comparing Delta Lake and Iceberg is possible, but a beginner thesis should compare a few features or one workflow, not every internal detail.",
+    learn: "Pick one comparison area: schema evolution, snapshots, or performance.",
+    practice: "Write which features are in scope and out of scope.",
+    thesis: "Write a narrow table-format comparison question.",
+    resource: "Apache Iceberg documentation",
+    url: "https://iceberg.apache.org/docs/latest/"
+  },
+  {
+    id: 27,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Limitations and validity",
+    focus: "A small Data Lake experiment has limits: local machine, small dataset, synthetic workload, cache effects, and tool version differences.",
+    learn: "Read your own plan and find weak assumptions.",
+    practice: "Write three limitations honestly.",
+    thesis: "Write how you will reduce one limitation.",
+    resource: "Delta Lake documentation",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    id: 28,
+    week: "Week 4: Data Lake thesis plan",
+    title: "Data Lake proposal",
+    focus: "You now have enough for a Data Lake mini proposal: question, dataset, baseline, method, metrics, expected result, and limitations.",
+    learn: "Review days 22-27.",
+    practice: "Fill the Builder tab with a Data Lake topic.",
+    thesis: "Draft your Data Lake thesis proposal in 6-8 sentences.",
+    resource: "Builder tab",
+    url: "#builder"
+  }
+);
+
+Object.assign(dataLakeStudyMaterials, {
+  15: {
+    text: ["Query engines can treat files as tables when they know schema, location, and format. This is why metadata is central to a useful data lake.", "The beginner idea is simple: the less unnecessary data a query reads, the better the design usually is."],
+    terms: ["query engine", "table metadata", "SQL"],
+    cs: "SQL over files connects storage layout to query planning."
+  },
+  16: {
+    text: ["Predicate pushdown applies filters early. If a query asks for date = 2026-05-01, the engine should avoid files from other dates.", "Formats and metadata decide how much skipping is possible."],
+    terms: ["predicate", "pushdown", "filter"],
+    cs: "This is an optimization problem: reduce work while preserving correct results."
+  },
+  17: {
+    text: ["Small files create overhead even if total data size is not large. The engine must list, open, and plan around many files.", "This is a common practical data lake problem and a good thesis topic because it is measurable."],
+    terms: ["small files", "planning overhead", "file count"],
+    cs: "Measure file count against query time while keeping total rows constant."
+  },
+  18: {
+    text: ["Compaction rewrites small files into larger files. It can improve query speed, but it is not free because rewriting data costs compute.", "A good experiment compares before and after compaction under the same queries."],
+    terms: ["compaction", "rewrite", "maintenance"],
+    cs: "This is a tradeoff between maintenance cost and query performance."
+  },
+  19: {
+    text: ["Statistics such as min and max values let a query engine skip irrelevant files. For example, if a file only contains ages 18-22, it cannot answer age > 50.", "These statistics make metadata useful for performance, not only documentation."],
+    terms: ["statistics", "min/max", "pruning"],
+    cs: "Metadata can act like a lightweight index."
+  },
+  20: {
+    text: ["Performance tests are noisy. Caches, background processes, data size, and tool versions can change results.", "A thesis should record conditions and repeat tests enough to make results believable."],
+    terms: ["reproducibility", "cache", "tool version"],
+    cs: "Experimental control matters as much as code implementation."
+  },
+  21: {
+    text: ["You now have a practical optimization map: file format, partitioning, small files, compaction, metadata statistics, and reproducibility.", "A good thesis chooses one variable and studies it carefully."],
+    terms: ["optimization", "variable", "workload"],
+    cs: "A narrow experiment is stronger than a broad tool survey."
+  },
+  22: {
+    text: ["A thesis-friendly dataset has clear columns, repeatable source, and queries that make sense. It does not need to be huge.", "For a beginner thesis, a small dataset with honest limits is acceptable."],
+    terms: ["dataset", "columns", "workload"],
+    cs: "Data selection defines what your experiment can and cannot claim."
+  },
+  23: {
+    text: ["A baseline is the simple design you improve on. Without a baseline, your result has no comparison point.", "Examples include CSV vs Parquet or unpartitioned vs partitioned layout."],
+    terms: ["baseline", "comparison", "control"],
+    cs: "Controlled comparison is the core of an experimental thesis."
+  },
+  24: {
+    text: ["Metrics turn a broad question into an answerable experiment. Use direct measurements such as query time, files scanned, storage size, or quality errors found.", "Use at most a few metrics so analysis stays clear."],
+    terms: ["metric", "query time", "storage size"],
+    cs: "Metrics should match the research question, not just be easy to collect."
+  },
+  25: {
+    text: ["Data quality experiments need error categories. A rule may catch real errors, miss errors, or flag good records incorrectly.", "This makes false positives and false negatives useful even outside machine learning."],
+    terms: ["false positive", "false negative", "error category"],
+    cs: "Rule evaluation can be measured with simple classification counts."
+  },
+  26: {
+    text: ["Table format comparison can become too broad. Keep it narrow by comparing one feature area, such as snapshots or schema evolution.", "A useful thesis explains scope clearly."],
+    terms: ["Delta Lake", "Iceberg", "scope"],
+    cs: "Feature comparison should still include a method, not only a description."
+  },
+  27: {
+    text: ["Limitations protect your thesis from overclaiming. Small local experiments cannot prove cloud-scale performance.", "Good limitations make the work more credible, not weaker."],
+    terms: ["validity", "limitation", "assumption"],
+    cs: "Every systems experiment depends on environment assumptions."
+  },
+  28: {
+    text: ["A Data Lake proposal can now be practical and focused. It should name the dataset, design variable, baseline, metrics, and expected tradeoff.", "This is enough to discuss the topic with a teacher."],
+    terms: ["proposal", "baseline", "tradeoff"],
+    cs: "The proposal is a testable plan, not just an interest area."
+  }
+});
+
+Object.assign(dataLakeQuizzes, {
+  15: { question: "What lets a query engine treat files like tables?", choices: ["Schema, location, format, and metadata.", "Only the file icon.", "A hidden manual worker."], answer: 0, explanation: "Metadata tells the engine how to read files as tables." },
+  16: { question: "What is predicate pushdown?", choices: ["Applying filters early to read less data.", "Moving files to the desktop.", "Turning SQL into images."], answer: 0, explanation: "Early filtering reduces unnecessary scanning." },
+  17: { question: "Why can many small files hurt performance?", choices: ["They increase listing, opening, and planning overhead.", "They make data more accurate automatically.", "They remove schemas."], answer: 0, explanation: "Small files add overhead even when total data size is unchanged." },
+  18: { question: "What does compaction do?", choices: ["Rewrites many small files into fewer larger files.", "Deletes all metadata.", "Changes SQL into Python."], answer: 0, explanation: "Compaction is a maintenance step for file layout." },
+  19: { question: "How can min/max statistics help queries?", choices: ["They help skip files that cannot match a filter.", "They translate text.", "They make every query exact by default."], answer: 0, explanation: "Statistics support pruning." },
+  20: { question: "Why record tool versions in a performance experiment?", choices: ["Version changes can affect results.", "It improves monitor brightness.", "It replaces metrics."], answer: 0, explanation: "Reproducibility requires environment details." },
+  21: { question: "What is the strongest beginner optimization thesis scope?", choices: ["One variable, one workload, clear metrics.", "Every feature of every tool.", "No measurement."], answer: 0, explanation: "Narrow controlled experiments are more reliable." },
+  22: { question: "What makes a dataset thesis-friendly?", choices: ["Clear columns, repeatable source, and meaningful queries.", "Only a large file name.", "No documentation."], answer: 0, explanation: "The dataset must support the research question." },
+  23: { question: "What is a baseline?", choices: ["The simple design used for comparison.", "The final paragraph only.", "A random chart color."], answer: 0, explanation: "A baseline gives results context." },
+  24: { question: "Which metric fits Data Lake performance?", choices: ["Query time.", "Wallpaper color.", "Number of tabs open."], answer: 0, explanation: "Query time directly measures performance." },
+  25: { question: "What is a false positive in data quality checking?", choices: ["A good record incorrectly flagged as bad.", "A broken monitor.", "A schema that never changes."], answer: 0, explanation: "False positives are incorrect alerts." },
+  26: { question: "How should a beginner compare Delta Lake and Iceberg?", choices: ["Compare one focused feature or workflow.", "Compare every internal detail.", "Avoid any method."], answer: 0, explanation: "Narrow scope keeps the thesis manageable." },
+  27: { question: "Why include limitations?", choices: ["They prevent overclaiming and clarify assumptions.", "They make all results invalid.", "They replace experiments."], answer: 0, explanation: "Limitations make claims more precise." },
+  28: { question: "What belongs in a Data Lake proposal?", choices: ["Dataset, variable, baseline, metrics, and limitations.", "Only a tool logo.", "Only a broad title."], answer: 0, explanation: "A proposal must describe a testable plan." }
+});
+
+blockchainConsensusLessons.push(
+  {
+    id: 15,
+    week: "Week 3: Consensus mechanisms",
+    title: "Difficulty and block interval",
+    focus: "In PoW systems, difficulty controls how hard it is to find a block. Block interval affects confirmation speed and fork probability.",
+    learn: "Study why difficulty adjustment exists.",
+    practice: "Predict what happens when blocks are found too quickly.",
+    thesis: "Write a simulation variable for PoW difficulty.",
+    resource: "Bitcoin whitepaper",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    id: 16,
+    week: "Week 3: Consensus mechanisms",
+    title: "Network delay",
+    focus: "Messages take time to reach nodes. Higher delay can increase forks, slow finality, or cause timeouts.",
+    learn: "Learn why network assumptions matter.",
+    practice: "Draw two miners finding blocks before hearing about each other.",
+    thesis: "Write how delay could affect fork frequency.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 17,
+    week: "Week 3: Consensus mechanisms",
+    title: "Validator selection",
+    focus: "PoS systems need a way to choose who proposes and validates blocks. Selection rules affect fairness, security, and performance.",
+    learn: "Study validator selection at a high level.",
+    practice: "Compare random selection with stake-weighted selection.",
+    thesis: "Write one fairness question about validator selection.",
+    resource: "Ethereum proof of stake",
+    url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
+  },
+  {
+    id: 18,
+    week: "Week 3: Consensus mechanisms",
+    title: "Incentives and penalties",
+    focus: "Consensus mechanisms use rewards and penalties to shape participant behavior. In PoS, penalties can discourage validators from acting incorrectly.",
+    learn: "Learn why incentives are part of protocol design.",
+    practice: "List one behavior to reward and one behavior to punish.",
+    thesis: "Write how incentives differ from correctness guarantees.",
+    resource: "Ethereum proof of stake",
+    url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
+  },
+  {
+    id: 19,
+    week: "Week 3: Consensus mechanisms",
+    title: "Leader-based consensus",
+    focus: "Many protocols choose a leader or proposer for each round. If the leader is slow or faulty, the protocol needs a recovery plan.",
+    learn: "Study the idea of proposer or leader.",
+    practice: "Draw one leader sending a proposed block to validators.",
+    thesis: "Write how faulty leaders affect liveness.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 20,
+    week: "Week 3: Consensus mechanisms",
+    title: "Reorganization",
+    focus: "A chain reorganization happens when the accepted branch changes. Reorg risk is important for users waiting for transaction confidence.",
+    learn: "Review forks and confirmations.",
+    practice: "Draw a short chain that gets replaced by a longer branch.",
+    thesis: "Write a metric for reorg frequency or depth.",
+    resource: "Bitcoin whitepaper",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    id: 21,
+    week: "Week 3: Consensus mechanisms",
+    title: "Mechanisms checkpoint",
+    focus: "You now understand consensus variables: difficulty, delay, validator selection, incentives, leaders, and reorgs.",
+    learn: "Review days 15-20.",
+    practice: "Pick one variable that can be simulated simply.",
+    thesis: "Choose one consensus mechanism question.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 22,
+    week: "Week 4: BFT tradeoffs",
+    title: "Quorums",
+    focus: "A quorum is the number of votes needed to accept a decision. BFT protocols use quorum rules so conflicting decisions cannot both get enough support.",
+    learn: "Study why majority alone may not be enough with Byzantine faults.",
+    practice: "For 4 validators, count how many votes 3 represents.",
+    thesis: "Write how quorum size affects safety.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 23,
+    week: "Week 4: BFT tradeoffs",
+    title: "The 3f + 1 idea",
+    focus: "Many BFT systems need at least 3f + 1 nodes to tolerate f Byzantine faults. This gives enough honest overlap between quorums.",
+    learn: "Understand the formula with f = 1.",
+    practice: "Calculate nodes needed for f = 1 and f = 2.",
+    thesis: "Write why more fault tolerance requires more nodes.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 24,
+    week: "Week 4: BFT tradeoffs",
+    title: "View change",
+    focus: "If a leader fails, BFT protocols need view change or leader replacement so the system can continue.",
+    learn: "Study leader failure recovery at a high level.",
+    practice: "Draw leader 1 failing and leader 2 taking over.",
+    thesis: "Write how view change affects latency.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 25,
+    week: "Week 4: BFT tradeoffs",
+    title: "Tendermint voting",
+    focus: "Tendermint-style consensus uses rounds with proposals, prevotes, and precommits to reach finality under assumptions.",
+    learn: "Learn proposal, prevote, and precommit conceptually.",
+    practice: "Write the three steps in order.",
+    thesis: "Write a small Tendermint message-flow explanation.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 26,
+    week: "Week 4: BFT tradeoffs",
+    title: "Message complexity",
+    focus: "Message complexity counts how many messages nodes exchange. BFT protocols can become expensive as validator count grows.",
+    learn: "Compare all-to-all voting with a smaller committee.",
+    practice: "Estimate messages if 5 validators each send to 4 others.",
+    thesis: "Write a message-count comparison question.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 27,
+    week: "Week 4: BFT tradeoffs",
+    title: "Timeouts",
+    focus: "Timeouts decide how long nodes wait before assuming something is wrong. Short timeouts can cause unnecessary retries; long timeouts can slow progress.",
+    learn: "Study timeout as a protocol parameter.",
+    practice: "Predict what happens with timeout too short or too long.",
+    thesis: "Write how timeout affects liveness and latency.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 28,
+    week: "Week 4: BFT tradeoffs",
+    title: "BFT checkpoint",
+    focus: "You can now discuss BFT with useful terms: quorum, 3f + 1, view change, voting phases, message complexity, and timeouts.",
+    learn: "Review days 22-27.",
+    practice: "Choose one BFT tradeoff to simulate or explain.",
+    thesis: "Pick your consensus thesis direction.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 29,
+    week: "Week 5: Consensus thesis plan",
+    title: "Build a toy simulator",
+    focus: "A toy simulator can model nodes, messages, delay, failures, and decisions. It does not need real cryptography to teach consensus tradeoffs.",
+    learn: "List simulator components.",
+    practice: "Draw node, message queue, and decision state.",
+    thesis: "Write the simulator scope in one paragraph.",
+    resource: "The Latest Gossip on BFT Consensus",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 30,
+    week: "Week 5: Consensus thesis plan",
+    title: "Choose variables",
+    focus: "Good variables include node count, network delay, faulty node count, timeout, difficulty, or block interval.",
+    learn: "Pick one independent variable.",
+    practice: "Write three values to test.",
+    thesis: "Write: I will change X and measure Y.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 31,
+    week: "Week 5: Consensus thesis plan",
+    title: "Choose metrics",
+    focus: "Consensus metrics should match the protocol property: commit latency, message count, fork frequency, stale blocks, or failed rounds.",
+    learn: "Connect each metric to safety, liveness, or performance.",
+    practice: "Choose two metrics for your simulator.",
+    thesis: "Write why each metric matters.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 32,
+    week: "Week 5: Consensus thesis plan",
+    title: "Run repeated trials",
+    focus: "Distributed simulations can vary because delays or leader choices may be random. Repeated trials make results more stable.",
+    learn: "Study why averages and ranges are useful.",
+    practice: "Plan 5 repeated runs for one setting.",
+    thesis: "Write how many trials you can realistically run.",
+    resource: "The Latest Gossip on BFT Consensus",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 33,
+    week: "Week 5: Consensus thesis plan",
+    title: "Analyze failure cases",
+    focus: "Failure analysis explains when the protocol stalls, forks, or uses many messages. These cases are often more interesting than the average result.",
+    learn: "Define two failure categories.",
+    practice: "Write what a stalled round looks like in logs.",
+    thesis: "Write one failure analysis table header.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 34,
+    week: "Week 5: Consensus thesis plan",
+    title: "Limits and assumptions",
+    focus: "A toy simulator simplifies reality. You must state assumptions about cryptography, network model, honest nodes, and adversary behavior.",
+    learn: "Write what your simulator ignores.",
+    practice: "List three assumptions.",
+    thesis: "Write the limitations paragraph.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 35,
+    week: "Week 5: Consensus thesis plan",
+    title: "Consensus proposal",
+    focus: "You now have enough for a consensus mini proposal: problem, assumptions, protocol, variables, metrics, expected tradeoff, and limitations.",
+    learn: "Review days 29-34.",
+    practice: "Fill the Builder tab with a consensus topic.",
+    thesis: "Draft your Blockchain Consensus thesis proposal in 6-8 sentences.",
+    resource: "Builder tab",
+    url: "#builder"
+  }
+);
+
+Object.assign(blockchainConsensusStudyMaterials, {
+  15: { text: ["Difficulty changes how hard it is to produce a PoW block. If blocks arrive too fast, forks can become more common.", "A simple simulation can vary difficulty and observe block interval or fork behavior."], terms: ["difficulty", "block interval", "fork risk"], cs: "Difficulty is a protocol parameter that affects performance and security." },
+  16: { text: ["Network delay means nodes do not learn about blocks instantly. Delay can cause honest nodes to work on different branches.", "This is one reason consensus research must state network assumptions clearly."], terms: ["delay", "propagation", "network model"], cs: "Distributed algorithms depend on message timing." },
+  17: { text: ["Validator selection decides who gets to propose or vote. Randomness, stake, and fairness all matter.", "A thesis can compare simple selection rules without building a real PoS chain."], terms: ["validator", "selection", "fairness"], cs: "Selection algorithms affect both security and workload distribution." },
+  18: { text: ["Incentives encourage participants to follow protocol rules. Penalties discourage behavior that threatens consensus.", "Incentives are not the same as correctness proofs, but they matter in open networks."], terms: ["reward", "penalty", "incentive"], cs: "Consensus combines algorithms with game-like participant behavior." },
+  19: { text: ["Leader-based protocols rely on a proposer for each round. A faulty leader can slow the system unless the protocol replaces it.", "Leader failure is a good way to study liveness."], terms: ["leader", "proposer", "liveness"], cs: "Leader replacement is a recovery mechanism." },
+  20: { text: ["A reorganization replaces part of the accepted chain with another branch. Users wait for confirmations to reduce this risk.", "Reorg depth and frequency can be measured in a simulation."], terms: ["reorg", "depth", "confirmation"], cs: "Reorgs connect network timing to user-facing reliability." },
+  21: { text: ["Mechanism variables give you thesis options: difficulty, delay, validator selection, incentives, leaders, and reorgs.", "Pick one because combining too many makes results hard to explain."], terms: ["mechanism", "variable", "scope"], cs: "A controlled simulation needs limited variables." },
+  22: { text: ["A quorum is enough votes to decide. BFT quorum rules are designed so two conflicting decisions cannot both succeed.", "Quorum design is central to safety."], terms: ["quorum", "vote", "safety"], cs: "Quorum overlap prevents conflicting commits." },
+  23: { text: ["The 3f + 1 rule means tolerating f Byzantine faults often needs at least 3f + 1 nodes.", "For f = 1, this gives 4 nodes; for f = 2, this gives 7 nodes."], terms: ["3f + 1", "fault tolerance", "overlap"], cs: "Fault tolerance has a concrete resource cost." },
+  24: { text: ["View change replaces a faulty or slow leader. It protects liveness but adds extra messages and latency.", "This is a good example of a safety-liveness-performance tradeoff."], terms: ["view change", "leader failure", "latency"], cs: "Recovery paths should be included in protocol evaluation." },
+  25: { text: ["Tendermint-style voting uses proposal, prevote, and precommit steps. These phases help validators converge on one block.", "The exact protocol is detailed, but the beginner model is a staged vote."], terms: ["proposal", "prevote", "precommit"], cs: "Voting phases structure distributed agreement." },
+  26: { text: ["Message complexity grows as validators exchange votes. If every validator sends to every other validator, the cost grows quickly.", "Counting messages is a simple but useful thesis metric."], terms: ["message complexity", "validator count", "all-to-all"], cs: "Algorithmic complexity appears as network traffic." },
+  27: { text: ["Timeouts control when nodes give up waiting and try another round. Bad timeout choices can cause stalls or slow commits.", "A simulator can vary timeout and measure commit latency."], terms: ["timeout", "round", "commit latency"], cs: "Timeout tuning is a parameter-sensitivity problem." },
+  28: { text: ["You now have enough BFT vocabulary for a beginner thesis. Good topics compare message cost, timeout behavior, or finality under delay.", "Stay focused on one tradeoff."], terms: ["tradeoff", "BFT", "finality"], cs: "A clear tradeoff is easier to defend than a broad blockchain overview." },
+  29: { text: ["A toy simulator models only the parts needed for your question. It can ignore cryptography if your topic is message count or latency.", "The model must be honest about what it simplifies."], terms: ["simulator", "model", "state"], cs: "Simulation is a valid CS method when assumptions are explicit." },
+  30: { text: ["An independent variable is what you change. A dependent metric is what you measure.", "Consensus experiments often change node count, delay, timeout, or faulty nodes."], terms: ["independent variable", "dependent metric", "parameter"], cs: "Good experiments separate inputs from outputs." },
+  31: { text: ["Metrics should connect to protocol goals. Message count measures cost, commit latency measures speed, and fork frequency measures consistency risk.", "Do not collect metrics you cannot explain."], terms: ["commit latency", "fork frequency", "failed round"], cs: "Metrics translate protocol behavior into evidence." },
+  32: { text: ["Repeated trials reduce the risk that one random run misleads you. Report averages and ranges when results vary.", "Even a small thesis can run several trials per setting."], terms: ["trial", "average", "range"], cs: "Randomized simulations need repeated measurement." },
+  33: { text: ["Failure cases explain why the system behaves badly. Logs can reveal faulty leaders, delayed messages, or timeout cascades.", "Error analysis makes results more useful than a single chart."], terms: ["failure case", "log", "stall"], cs: "Qualitative failure categories support quantitative metrics." },
+  34: { text: ["Assumptions define what your result means. A toy simulator may assume simple delays, no cryptographic cost, or fixed validators.", "State these assumptions directly."], terms: ["assumption", "network model", "adversary"], cs: "Correctness claims depend on model boundaries." },
+  35: { text: ["A consensus proposal should name the protocol idea, assumptions, changed variable, measured metrics, and limitations.", "This gives a teacher enough detail to judge feasibility."], terms: ["proposal", "protocol", "metric"], cs: "A consensus thesis is strongest when it is a small, testable distributed-systems study." }
+});
+
+Object.assign(blockchainConsensusQuizzes, {
+  15: { question: "What does PoW difficulty affect?", choices: ["How hard it is to find a block.", "The color of a block.", "Whether SQL works."], answer: 0, explanation: "Difficulty controls expected block-finding effort." },
+  16: { question: "Why can network delay increase forks?", choices: ["Nodes may mine or vote before hearing about another block.", "Delay deletes all blocks.", "Delay guarantees instant finality."], answer: 0, explanation: "Slow propagation can create competing views." },
+  17: { question: "What does validator selection decide?", choices: ["Who proposes or votes in consensus.", "Which CSS file loads.", "Which thesis font is used."], answer: 0, explanation: "Selection rules affect fairness and security." },
+  18: { question: "Why do protocols use penalties?", choices: ["To discourage harmful validator behavior.", "To increase image resolution.", "To remove all network messages."], answer: 0, explanation: "Penalties shape incentives." },
+  19: { question: "What problem does leader replacement address?", choices: ["A slow or faulty leader hurting liveness.", "Too many file formats.", "A missing README."], answer: 0, explanation: "Leader replacement helps the protocol continue." },
+  20: { question: "What is a chain reorganization?", choices: ["Replacing part of the accepted branch with another branch.", "Compressing CSS.", "Sorting a spreadsheet only."], answer: 0, explanation: "Reorgs change the accepted chain branch." },
+  21: { question: "Why choose one simulation variable?", choices: ["It makes cause and effect easier to explain.", "It prevents all bugs.", "It removes the need for metrics."], answer: 0, explanation: "Controlled scope makes results interpretable." },
+  22: { question: "What is a quorum?", choices: ["Enough votes to accept a decision.", "A file format.", "A token counter."], answer: 0, explanation: "Quorum rules decide when agreement is reached." },
+  23: { question: "How many nodes does 3f + 1 require for f = 2?", choices: ["7", "3", "12"], answer: 0, explanation: "3 * 2 + 1 = 7." },
+  24: { question: "What is view change for?", choices: ["Replacing a failed or slow leader.", "Changing the page theme.", "Deleting old data."], answer: 0, explanation: "View change supports liveness after leader failure." },
+  25: { question: "Which is a Tendermint-style voting step?", choices: ["Prevote.", "Parquet.", "Tokenization."], answer: 0, explanation: "Tendermint-style rounds include prevote and precommit." },
+  26: { question: "What does message complexity count?", choices: ["How many messages nodes exchange.", "How many images are in the app.", "How many words are in a title."], answer: 0, explanation: "It measures communication cost." },
+  27: { question: "What can happen if timeout is too short?", choices: ["Unnecessary retries or failed rounds.", "Guaranteed faster finality always.", "No messages are sent."], answer: 0, explanation: "Too-short timeouts can harm progress." },
+  28: { question: "Which is a good BFT thesis tradeoff?", choices: ["Message cost vs validator count.", "Button color vs font family.", "Image size vs README length."], answer: 0, explanation: "Message cost is directly tied to validator count." },
+  29: { question: "What can a toy consensus simulator ignore if not relevant?", choices: ["Real cryptographic cost.", "All assumptions.", "All metrics."], answer: 0, explanation: "A toy model can simplify cryptography if the scope is clear." },
+  30: { question: "What is an independent variable?", choices: ["The thing you change in the experiment.", "The final conclusion.", "A random screenshot."], answer: 0, explanation: "Independent variables are experiment inputs." },
+  31: { question: "Which metric measures consensus speed?", choices: ["Commit latency.", "CSS line count.", "Image brightness."], answer: 0, explanation: "Commit latency measures time to decision." },
+  32: { question: "Why run repeated trials?", choices: ["To reduce misleading random variation.", "To avoid writing methods.", "To remove all assumptions."], answer: 0, explanation: "Repeated runs make simulation results more stable." },
+  33: { question: "What does failure analysis explain?", choices: ["When and why the protocol stalls or behaves badly.", "Only the title page.", "How to draw icons."], answer: 0, explanation: "Failure analysis makes results interpretable." },
+  34: { question: "Why state assumptions?", choices: ["They define what the result actually means.", "They make metrics unnecessary.", "They replace sources."], answer: 0, explanation: "Claims depend on model assumptions." },
+  35: { question: "What belongs in a consensus proposal?", choices: ["Protocol, assumptions, variables, metrics, and limitations.", "Only a coin name.", "Only a diagram."], answer: 0, explanation: "A testable proposal needs method and measurement." }
+});
 
 const tracks = {
   llm: {
