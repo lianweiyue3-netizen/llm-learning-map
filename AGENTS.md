@@ -2,10 +2,11 @@
 
 ## 1. Project Purpose / 项目目标
 
-This project is a local, free-to-use website for learning Large Language Models from scratch in about 10 minutes per day.
+This project is a local, free-to-use website for learning CS thesis foundations in about 10 minutes per day. The main daily tracker is for Large Language Models, with additional category tracks for Data Lake and Blockchain Consensus.
 
 Primary user goal:
 - Learn LLM basics gradually.
+- Compare LLM, Data Lake, and Blockchain Consensus as possible thesis directions.
 - Prepare for an easy computer science thesis.
 - Find model-wise / algorithm-wise thesis topics.
 - Track daily learning, quiz progress, notes, and thesis proposal readiness.
@@ -52,6 +53,7 @@ Defines the page structure:
 - Top navigation tabs.
 - Today lesson view.
 - Roadmap tab.
+- Categories tab.
 - Thesis テーマ tab.
 - Library tab.
 - Builder tab.
@@ -60,6 +62,7 @@ Defines the page structure:
 Important sections:
 - `#todayView`
 - `#roadmapView`
+- `#categoriesView`
 - `#themesView`
 - `#libraryView`
 - `#builderView`
@@ -101,6 +104,7 @@ Main exported globals:
 - `lessons`
 - `studyMaterials`
 - `quizzes`
+- `categoryTracks`
 - `themes`
 - `library`
 
@@ -114,6 +118,11 @@ Theme focus:
 - Model-wise and algorithm-wise topics.
 - RAG, prompting, embeddings, LoRA, BERT, code evaluation, tokenizer behavior.
 
+Category track focus:
+- LLM: tokenization, transformers, prompting, RAG, evaluation.
+- Data Lake: object storage, Parquet, partitioning, metadata, lakehouse table formats.
+- Blockchain Consensus: blocks, forks, finality, PoW, PoS, BFT, safety and liveness.
+
 ### `app.js`
 
 Contains app state, rendering, event handling, localStorage, and exports.
@@ -126,6 +135,7 @@ Important responsibilities:
 - Render mini CS lab.
 - Render review queue.
 - Enforce daily checklist before completion.
+- Render category tracks.
 - Render thesis readiness score.
 - Save thesis builder fields.
 - Export notes and thesis proposal.
@@ -145,6 +155,21 @@ Each lesson includes:
 - Review queue.
 - Daily checklist.
 - Optional external reading link.
+
+### Categories
+
+The Categories tab provides three beginner-friendly thesis directions:
+- Large Language Model.
+- Data Lake.
+- Blockchain Consensus.
+
+Each category includes:
+- A short summary.
+- Key concepts.
+- A 10-minute learning path.
+- Easy thesis ideas.
+- Starter sources.
+- A button that opens the relevant app view.
 
 ### Completion Rules
 
@@ -308,6 +333,7 @@ Manual checks:
 - Study material appears.
 - Mini CS lab appears.
 - Quiz appears.
+- Categories tab shows LLM, Data Lake, and Blockchain Consensus.
 - Daily checklist appears.
 - Builder tab opens.
 - Readiness score renders.
@@ -388,6 +414,7 @@ Status:
 ```text
 Working local static website.
 Core learning tracker complete.
+LLM, Data Lake, and Blockchain Consensus category tracks added.
 Thesis-prep features added.
 Ready for daily use.
 ```

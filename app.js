@@ -73,6 +73,7 @@ const elements = {
   dailyNote: document.querySelector("#dailyNote"),
   saveStatus: document.querySelector("#saveStatus"),
   roadmapList: document.querySelector("#roadmapList"),
+  categoryList: document.querySelector("#categoryList"),
   themeList: document.querySelector("#themeList"),
   libraryList: document.querySelector("#libraryList"),
   notesList: document.querySelector("#notesList"),
@@ -416,6 +417,47 @@ function renderRoadmap() {
   `).join("");
 }
 
+function renderCategories() {
+  elements.categoryList.innerHTML = categoryTracks.map((track) => `
+    <article class="category-card">
+      <div class="category-header">
+        <div>
+          <p class="eyebrow">${escapeHtml(track.shortTitle)}</p>
+          <h3>${escapeHtml(track.title)}</h3>
+        </div>
+        <span class="tag">${escapeHtml(track.level)}</span>
+      </div>
+
+      <p class="category-summary">${escapeHtml(track.summary)}</p>
+
+      <div class="concept-row" aria-label="${escapeHtml(track.title)} key concepts">
+        ${track.concepts.map((concept) => `<span>${escapeHtml(concept)}</span>`).join("")}
+      </div>
+
+      <div class="category-grid">
+        <section>
+          <h4>10-minute learning path</h4>
+          <ol>
+            ${track.path.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+          </ol>
+        </section>
+        <section>
+          <h4>Easy thesis ideas</h4>
+          <ul>
+            ${track.thesisIdeas.map((idea) => `<li>${escapeHtml(idea)}</li>`).join("")}
+          </ul>
+        </section>
+      </div>
+
+      <div class="source-row">
+        ${track.sources.map((source) => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.label)}</a>`).join("")}
+      </div>
+
+      <button class="secondary-button category-action" type="button" data-view-target="${escapeHtml(track.actionView)}">${escapeHtml(track.actionLabel)}</button>
+    </article>
+  `).join("");
+}
+
 function renderThemes() {
   const filtered = state.activeFilter === "all"
     ? themes
@@ -583,6 +625,7 @@ function renderAll() {
   renderStats();
   renderToday();
   renderRoadmap();
+  renderCategories();
   renderThemes();
   renderLibrary();
   renderNotes();
@@ -602,6 +645,13 @@ document.querySelector(".tabs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-view]");
   if (!button) return;
   setView(button.dataset.view);
+});
+
+elements.categoryList.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-view-target]");
+  if (!button) return;
+  setView(button.dataset.viewTarget);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 elements.completeButton.addEventListener("click", () => {
@@ -753,7 +803,9 @@ elements.resetButton.addEventListener("click", () => {
   renderAll();
 });
 
-if (window.location.hash === "#library") {
+if (window.location.hash === "#categories") {
+  setView("categories");
+} else if (window.location.hash === "#library") {
   setView("library");
 } else if (window.location.hash === "#builder") {
   setView("builder");

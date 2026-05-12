@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LLM Thesis Tracker</title>
+    <title>CS Thesis Tracker</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -11,8 +11,8 @@
       <aside class="sidebar" aria-label="Learning tracker summary">
         <div class="brand-block">
           <p class="eyebrow">10 minutes a day</p>
-          <h1>LLM Thesis Tracker</h1>
-          <p class="subtitle">A gentle path from zero knowledge to a small thesis proposal.</p>
+          <h1>CS Thesis Tracker</h1>
+          <p class="subtitle">Daily thesis paths for LLM, Data Lake, and Blockchain Consensus.</p>
         </div>
 
         <img class="stack-visual" src="assets/llm-roadmap-ai-labeled.png" alt="AI-generated roadmap illustration labeled Tokens, Transformer, Prompting, RAG, Evaluation, and Thesis">
@@ -53,6 +53,7 @@
         <nav class="tabs" aria-label="Tracker sections">
           <button class="tab-button is-active" type="button" data-view="today">Today</button>
           <button class="tab-button" type="button" data-view="roadmap">Roadmap</button>
+          <button class="tab-button" type="button" data-view="categories">Categories</button>
           <button class="tab-button" type="button" data-view="themes">Thesis テーマ</button>
           <button class="tab-button" type="button" data-view="library">Library</button>
           <button class="tab-button" type="button" data-view="builder">Builder</button>
@@ -178,6 +179,15 @@
             <h2 id="roadmapHeading">From scratch to thesis proposal</h2>
           </div>
           <div id="roadmapList" class="roadmap-list"></div>
+        </section>
+
+        <section id="categoriesView" class="view" aria-labelledby="categoriesHeading">
+          <div class="section-heading">
+            <p class="eyebrow">Choose your CS direction</p>
+            <h2 id="categoriesHeading">Learning categories</h2>
+            <p>Three beginner-friendly thesis tracks: LLM, Data Lake, and Blockchain Consensus. Use one as your main thesis area, or compare ideas before choosing.</p>
+          </div>
+          <div id="categoryList" class="category-list"></div>
         </section>
 
         <section id="themesView" class="view" aria-labelledby="themesHeading">

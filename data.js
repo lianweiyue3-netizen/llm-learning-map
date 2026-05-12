@@ -463,6 +463,120 @@
   }
 ];
 
+const categoryTracks = [
+  {
+    id: "llm",
+    title: "Large Language Model",
+    shortTitle: "LLM",
+    level: "Current daily tracker",
+    summary: "Study how language models tokenize text, use transformers, retrieve documents, and get evaluated. This is the main 42-day path already built into the app.",
+    concepts: ["tokens", "embeddings", "transformer", "prompting", "RAG", "evaluation"],
+    path: [
+      "Finish the Today and Roadmap lessons in order.",
+      "Use the mini quiz after each lesson to check understanding.",
+      "Write 2-3 daily notes that can become your literature review.",
+      "Move one strong idea into the Thesis Builder."
+    ],
+    thesisIdeas: [
+      "Compare BM25 and embedding retrieval for a small course Q&A bot.",
+      "Test whether few-shot prompts improve answers to beginner CS questions.",
+      "Measure how tokenization changes Japanese-English prompt length and answer quality."
+    ],
+    sources: [
+      {
+        label: "Hugging Face LLM Course",
+        url: "https://huggingface.co/learn/llm-course/en/chapter1/1"
+      },
+      {
+        label: "Attention Is All You Need",
+        url: "https://arxiv.org/abs/1706.03762"
+      },
+      {
+        label: "RAG paper",
+        url: "https://arxiv.org/abs/2005.11401"
+      }
+    ],
+    actionLabel: "Open LLM daily tracker",
+    actionView: "today"
+  },
+  {
+    id: "data-lake",
+    title: "Data Lake",
+    shortTitle: "Data Lake",
+    level: "Easy systems thesis",
+    summary: "Study how organizations store raw and processed data for analytics. The CS angle is file formats, metadata, partitioning, query performance, and data quality.",
+    concepts: ["object storage", "Parquet", "schema evolution", "partitioning", "metadata catalog", "lakehouse"],
+    path: [
+      "Learn the difference between database, data warehouse, and data lake.",
+      "Read what columnar files like Parquet are used for.",
+      "Study partitioning: why folder layout affects query speed.",
+      "Compare table formats such as Delta Lake and Apache Iceberg.",
+      "Pick one small dataset and design two storage layouts.",
+      "Measure query time, file count, or storage size.",
+      "Write limitations: data volume, local machine, and tool versions."
+    ],
+    thesisIdeas: [
+      "Partition strategy comparison for student activity logs stored as Parquet.",
+      "Delta Lake vs Apache Iceberg feature comparison for small analytical datasets.",
+      "Data quality rules for a simple data lake ingestion pipeline."
+    ],
+    sources: [
+      {
+        label: "Delta Lake documentation",
+        url: "https://docs.delta.io/latest/index.html"
+      },
+      {
+        label: "Apache Iceberg documentation",
+        url: "https://iceberg.apache.org/docs/latest/"
+      },
+      {
+        label: "HDFS architecture guide",
+        url: "https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html"
+      }
+    ],
+    actionLabel: "Open Thesis Builder",
+    actionView: "builder"
+  },
+  {
+    id: "blockchain-consensus",
+    title: "Blockchain Consensus",
+    shortTitle: "Consensus",
+    level: "Easy distributed systems thesis",
+    summary: "Study how distributed nodes agree on one shared history even when messages are delayed or some nodes fail. The CS angle is safety, liveness, fault models, and performance tradeoffs.",
+    concepts: ["blocks", "forks", "safety", "liveness", "PoW", "PoS", "BFT"],
+    path: [
+      "Start with why distributed systems need consensus.",
+      "Learn blocks, forks, confirmations, and finality.",
+      "Compare Proof of Work and Proof of Stake at a high level.",
+      "Read the basic idea of Byzantine fault tolerance.",
+      "Simulate a small voting or leader-based consensus process.",
+      "Measure latency, number of messages, or failure tolerance.",
+      "Write tradeoffs: energy, decentralization, throughput, and security."
+    ],
+    thesisIdeas: [
+      "Beginner simulation of PoW difficulty versus block confirmation time.",
+      "PBFT-style voting explained and tested with a small message-count simulator.",
+      "Comparison of finality and fork behavior in PoW and BFT-style consensus."
+    ],
+    sources: [
+      {
+        label: "Bitcoin whitepaper",
+        url: "https://bitcoin.org/bitcoin.pdf"
+      },
+      {
+        label: "Practical Byzantine Fault Tolerance",
+        url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+      },
+      {
+        label: "Tendermint consensus paper",
+        url: "https://arxiv.org/abs/1807.04938"
+      }
+    ],
+    actionLabel: "Open Thesis Builder",
+    actionView: "builder"
+  }
+];
+
 const studyMaterials = {
   1: {
     text: [

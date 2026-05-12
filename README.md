@@ -1,163 +1,102 @@
-# LLM Learning Map
+# CS Thesis Tracker
 
-LLM（Large Language Model）をゼロから学び、最終的にコンピュータサイエンス系の小さな卒業論文・レポートテーマを作るための学習トラッカーです。
+LLM、Data Lake、Blockchain Consensus を、卒業論文・小さな研究レポートのテーマ候補として学ぶための静的 Web アプリです。
 
-1日10分程度で進められるように、学習内容、クイズ、メモ、復習、ミニ実験、論文テーマ作成を1つの静的Webサイトにまとめています。
+メインの学習トラックは LLM です。1日10分程度で進められる 42 日分のロードマップ、ミニクイズ、メモ、復習、ミニ実験、Thesis Builder を含みます。追加カテゴリとして Data Lake と Blockchain Consensus の基礎、学習順、初心者向けテーマ案、参考資料も確認できます。
 
 ## 目的
 
-このアプリの目的は次の3つです。
-
-- LLMの基礎を毎日少しずつ学ぶ
-- モデル・アルゴリズム寄りの論文テーマを見つける
-- 学習メモから簡単な論文提案書を作る
-
-対象は、LLMをこれから学び始めるコンピュータサイエンス学生です。
+- LLM の基礎をゼロから少しずつ学ぶ
+- Data Lake と Blockchain Consensus も thesis テーマ候補として比較する
+- モデル・アルゴリズム・システム寄りの簡単な CS テーマを見つける
+- 毎日のメモから論文提案書の材料を作る
 
 ## 主な機能
 
-### 42日間の学習ロードマップ
+- **Today**: 今日の LLM レッスン、Study material、Key terms、CS angle、Mini quiz、Mini CS lab
+- **Roadmap**: 42 日分の LLM 学習ロードマップ
+- **Categories**: LLM、Data Lake、Blockchain Consensus の3カテゴリ
+- **Thesis テーマ**: 初心者向けの CS 論文テーマ案
+- **Library**: 参考になる論文、卒論、コース、公式資料
+- **Builder**: 研究質問、手法、データ、評価指標、制限を書く提案書フォーム
+- **Notes**: 毎日の学習メモの保存とエクスポート
 
-LLMの基礎から論文提案まで、42日分の学習内容があります。
+## カテゴリ
 
-学習範囲:
+### LLM
 
-- LLMとは何か
-- トークンと埋め込み
-- TransformerとAttention
-- プロンプト設計
-- Fine-tuning / Instruction tuning / RLHF
+扱う内容:
+
+- tokenization
+- embeddings
+- transformer
+- prompting
 - RAG
-- 評価指標
-- 研究質問の作り方
-- 論文構成と提案書作成
-
-### 毎日の学習ページ
-
-各レッスンには以下があります。
-
-- Study material
-- Key terms
-- CS angle
-- 2分 / 5分 / 3分の学習タスク
-- Mini CS lab
-- Mini quiz
-- Review queue
-- Daily checklist
-- Daily note
-
-### Daily checklist
-
-レッスンを完了するには、次の3つを満たす必要があります。
-
-1. Study materialを読んだ
-2. Mini quizに正解した
-3. Daily noteを2文以上書いた
-
-これにより、ただボタンを押すだけではなく、最低限の学習記録が残るようになっています。
-
-### Mini CS lab
-
-モデル・アルゴリズム寄りの小さな実験タスクです。
-
-例:
-
-- 入力と出力の流れを追跡する
-- Attentionの関係を図で考える
-- Zero-shotとFew-shotを比較する
-- RAGの検索チャンクを考える
-- 評価指標を決める
-
-### Review queue
-
-完了済みレッスンのクイズを復習できます。
-
-目的:
-
-- 忘却を防ぐ
-- 重要概念を繰り返し確認する
-- 論文を書くための基礎語彙を定着させる
-
-### Thesis テーマ
-
-初心者でも扱いやすいCS寄りの論文テーマを用意しています。
+- evaluation
 
 テーマ例:
 
-- RAGのchunk size比較
-- BM25とembedding retrievalの比較
-- Zero-shotとFew-shot promptingの比較
-- LoRA rankと性能の関係
-- BERT分類器とLLM prompt分類器の比較
-- LLMによるコード説明の誤り分析
-- 日本語・英語プロンプトのtokenizer比較
+- RAG の chunk size 比較
+- BM25 と embedding retrieval の比較
+- zero-shot と few-shot prompting の比較
+- tokenizer による日本語・英語プロンプトの違い
 
-### Thesis Builder
+### Data Lake
 
-論文提案書を作るためのフォームです。
+扱う内容:
 
-入力項目:
+- object storage
+- Parquet
+- partitioning
+- schema evolution
+- metadata catalog
+- lakehouse table format
 
-- Working title
-- Research question
-- Model / algorithm
-- Dataset / material
-- Evaluation metric
-- Expected contribution
-- Limitations / risks
+テーマ例:
 
-入力内容はブラウザに自動保存されます。
+- Parquet データの partition strategy 比較
+- Delta Lake と Apache Iceberg の機能比較
+- Data Lake ingestion pipeline のデータ品質チェック
 
-Markdown形式で提案書をダウンロードできます。
+### Blockchain Consensus
 
-```text
-llm-thesis-proposal.md
-```
+扱う内容:
 
-### Readiness score
+- blocks
+- forks
+- finality
+- Proof of Work
+- Proof of Stake
+- Byzantine Fault Tolerance
+- safety and liveness
 
-論文準備度を表示します。
+テーマ例:
 
-スコアは以下から計算されます。
-
-- 学習進捗
-- Thesis Builderの入力状況
-
-カテゴリ:
-
-- LLM basics
-- Transformers
-- Prompting & alignment
-- RAG & systems
-- Research method
-- Writing
-- Proposal fields
-
-### Notes export
-
-Daily noteはブラウザに自動保存されます。
-
-メモはテキストファイルとしてダウンロードできます。
-
-```text
-llm-thesis-notes.txt
-```
+- PoW difficulty と block confirmation time の簡易シミュレーション
+- PBFT 風 voting の message count 分析
+- PoW と BFT 系 consensus の finality 比較
 
 ## 使い方
 
-### 1. ローカルサーバーを起動
-
-プロジェクトフォルダで次を実行します。
+プロジェクトフォルダでローカルサーバーを起動します。
 
 ```powershell
 python -m http.server 5173 --bind 127.0.0.1
 ```
 
-### 2. ブラウザで開く
+ブラウザで開きます。
 
 ```text
 http://127.0.0.1:5173/
 ```
+
+## 完了ルール
+
+LLM の各レッスンは、次の3つを満たすと完了できます。
+
+1. Study material を読んだ
+2. Mini quiz に正解した
+3. Daily note を2文以上書いた
 
 ## ファイル構成
 
@@ -176,131 +115,38 @@ http://127.0.0.1:5173/
     └── llm-learning-map.svg
 ```
 
-### `index.html`
-
-画面構造を定義しています。
-
-主なタブ:
-
-- Today
-- Roadmap
-- Thesis テーマ
-- Library
-- Builder
-- Notes
-
-### `styles.css`
-
-UIデザインとレスポンシブ対応を管理しています。
-
-### `data.js`
-
-学習データを管理しています。
-
-含まれるデータ:
-
-- lessons
-- studyMaterials
-- quizzes
-- themes
-- library
-
-### `app.js`
-
-アプリの動作を管理しています。
-
-主な処理:
-
-- 進捗保存
-- 今日のレッスン表示
-- クイズ判定
-- チェックリスト判定
-- 復習キュー
-- Thesis Builder
-- Readiness score
-- メモ・提案書のエクスポート
-
-### `AGENTS.md`
-
-将来このプロジェクトを編集する開発者・AIエージェント向けの詳細な引き継ぎメモです。
-
-## データ保存について
-
-このアプリはバックエンドを使いません。
-
-進捗やメモはブラウザの`localStorage`に保存されます。
-
-注意:
-
-- 同じブラウザでは進捗が残ります
-- ブラウザデータを削除すると進捗も消えます
-- 別のPCやブラウザには自動同期されません
-
 ## 技術構成
-
-使用技術:
 
 - HTML
 - CSS
 - JavaScript
 - localStorage
 
-ビルドツールやフレームワークは使っていません。
-
-理由:
-
-- ローカルで簡単に動く
-- 無料で使える
-- セットアップが少ない
-- 学習用プロジェクトとして理解しやすい
+バックエンド、ログイン、データベース、ビルドツールは使っていません。進捗とメモは同じブラウザの `localStorage` に保存されます。
 
 ## 開発・確認コマンド
 
-JavaScript構文チェック:
+JavaScript の構文チェック:
 
 ```powershell
 node --check data.js
 node --check app.js
 ```
 
-ローカル起動:
-
-```powershell
-python -m http.server 5173 --bind 127.0.0.1
-```
-
-Git状態確認:
+Git の状態確認:
 
 ```powershell
 git status --short --branch
 ```
 
-## 今後追加すると良い機能
+## 注意
 
-優先度が高いもの:
+- ブラウザデータを削除すると進捗も消えます。
+- 別の PC や別ブラウザには自動同期されません。
+- 長く使う場合は Notes や proposal を定期的にエクスポートしてください。
 
-- 進捗データのJSONエクスポート・インポート
-- テーマのお気に入り保存
-- 用語集タブ
-- Token counter
-- RAG実験ワークシート
-- カレンダー形式の学習記録
-- 印刷しやすい提案書テンプレート
-
-特に、`localStorage`だけに依存しているため、進捗データのJSONエクスポート・インポートは早めに追加すると安全です。
-
-## リポジトリ
-
-GitHub:
+## GitHub
 
 ```text
 https://github.com/lianweiyue3-netizen/llm-learning-map
-```
-
-## 現在の状態
-
-```text
-ローカル静的Webサイトとして動作済み。
-学習トラッカー、クイズ、ミニ実験、復習、メモ、論文ビルダーを実装済み。
-GitHubにpush済み。
 ```
