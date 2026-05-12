@@ -47,7 +47,13 @@
             <p class="eyebrow">Today</p>
             <h2 id="todayTitle">Loading lesson...</h2>
           </div>
-          <div class="date-pill" id="datePill">Day 1</div>
+          <div class="topbar-actions">
+            <label class="track-picker" for="trackSelect">
+              <span>Category</span>
+              <select id="trackSelect"></select>
+            </label>
+            <div class="date-pill" id="datePill">Day 1</div>
+          </div>
         </header>
 
         <nav class="tabs" aria-label="Tracker sections">
@@ -183,9 +189,9 @@
 
         <section id="categoriesView" class="view" aria-labelledby="categoriesHeading">
           <div class="section-heading">
-            <p class="eyebrow">Choose your CS direction</p>
+            <p class="eyebrow">Choose first</p>
             <h2 id="categoriesHeading">Learning categories</h2>
-            <p>Three beginner-friendly thesis tracks: LLM, Data Lake, and Blockchain Consensus. Use one as your main thesis area, or compare ideas before choosing.</p>
+            <p>Select one category first. The Today lesson, Roadmap, study material, quizzes, notes, and progress will switch to that category.</p>
           </div>
           <div id="categoryList" class="category-list"></div>
         </section>

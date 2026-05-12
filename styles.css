@@ -162,6 +162,35 @@ a {
   margin-bottom: 22px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.track-picker {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.track-picker select {
+  min-height: 38px;
+  min-width: 230px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 38px 0 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  text-transform: none;
+}
+
 .topbar h2 {
   font-size: 2rem;
   line-height: 1.14;
@@ -722,6 +751,11 @@ a:focus-visible {
   padding: 22px;
 }
 
+.category-card.is-selected {
+  border-color: rgba(8, 127, 140, 0.42);
+  background: rgba(8, 127, 140, 0.06);
+}
+
 .category-header {
   display: flex;
   justify-content: space-between;
@@ -737,6 +771,26 @@ a:focus-visible {
 
 .category-summary {
   max-width: 78ch;
+}
+
+.category-summary strong {
+  color: var(--ink);
+}
+
+.category-progress {
+  display: grid;
+  gap: 8px;
+}
+
+.category-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.category-progress strong {
+  color: var(--ink);
 }
 
 .concept-row {
@@ -1013,6 +1067,15 @@ a:focus-visible {
 
   .topbar {
     display: grid;
+  }
+
+  .topbar-actions {
+    justify-content: stretch;
+  }
+
+  .track-picker,
+  .track-picker select {
+    width: 100%;
   }
 
   .topbar h2 {

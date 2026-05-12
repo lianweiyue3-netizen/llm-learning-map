@@ -2,7 +2,7 @@
 
 ## 1. Project Purpose / 项目目标
 
-This project is a local, free-to-use website for learning CS thesis foundations in about 10 minutes per day. The main daily tracker is for Large Language Models, with additional category tracks for Data Lake and Blockchain Consensus.
+This project is a local, free-to-use website for learning CS thesis foundations in about 10 minutes per day. It supports selectable learning tracks for Large Language Models, Data Lake, and Blockchain Consensus.
 
 Primary user goal:
 - Learn LLM basics gradually.
@@ -104,13 +104,21 @@ Main exported globals:
 - `lessons`
 - `studyMaterials`
 - `quizzes`
+- `dataLakeLessons`
+- `dataLakeStudyMaterials`
+- `dataLakeQuizzes`
+- `blockchainConsensusLessons`
+- `blockchainConsensusStudyMaterials`
+- `blockchainConsensusQuizzes`
 - `categoryTracks`
+- `tracks`
 - `themes`
 - `library`
 
 Current learning path:
-- 42 lessons.
-- 6 weeks.
+- LLM: 42 lessons over 6 weeks.
+- Data Lake: 14 lessons over 2 weeks.
+- Blockchain Consensus: 14 lessons over 2 weeks.
 - 10-minute structure per lesson.
 
 Theme focus:
@@ -158,18 +166,21 @@ Each lesson includes:
 
 ### Categories
 
-The Categories tab provides three beginner-friendly thesis directions:
+The Categories tab provides three selectable beginner-friendly thesis directions:
 - Large Language Model.
 - Data Lake.
 - Blockchain Consensus.
 
-Each category includes:
-- A short summary.
-- Key concepts.
-- A 10-minute learning path.
-- Easy thesis ideas.
-- Starter sources.
-- A button that opens the relevant app view.
+Selecting a category changes:
+- Today lesson.
+- Roadmap.
+- Study material.
+- Mini quiz.
+- Mini CS lab.
+- Daily notes.
+- Completion progress.
+- Review queue.
+- Readiness score.
 
 ### Completion Rules
 
@@ -240,6 +251,7 @@ Current keys:
 
 ```text
 llm-thesis-v2:start-date
+llm-thesis-v4:track-start-dates
 llm-thesis-v2:completed
 llm-thesis-v2:completed-on
 llm-thesis-v2:completed-dates
@@ -248,11 +260,17 @@ llm-thesis-v3:quiz-answers
 llm-thesis-v2:review-answers
 llm-thesis-v2:study-read
 llm-thesis-v2:builder
+llm-thesis-v4:active-track
 llm-thesis-v2:active-lesson
+llm-thesis-v4:active-lesson-by-track
 llm-thesis-v2:last-opened-date
 ```
 
 Important behavior:
+- `active-track` stores the selected category.
+- `active-lesson-by-track` stores the selected lesson for each category.
+- Track-specific progress is keyed as `trackId:lessonId`, for example `data-lake:1`.
+- Old LLM-only numeric lesson IDs are normalized internally to `llm:<id>`.
 - `last-opened-date` prevents the app from staying on yesterday’s active lesson.
 - On a new day, the app resets the active lesson to today’s lesson.
 - Completed lesson dates are tracked by lesson ID in `completed-on`.
@@ -262,11 +280,11 @@ Important behavior:
 ### Today’s Lesson Logic
 
 `getTodayLesson()` calculates the day based on:
-- `start-date`
+- selected track start date
 - current local date
-- `lessons.length`
+- active track lesson count
 
-It loops through 42 lessons using modulo.
+It loops through the active track lessons using modulo.
 
 ### Completion State
 
@@ -333,7 +351,7 @@ Manual checks:
 - Study material appears.
 - Mini CS lab appears.
 - Quiz appears.
-- Categories tab shows LLM, Data Lake, and Blockchain Consensus.
+- Category selector switches Today/Roadmap/study material/quiz between LLM, Data Lake, and Blockchain Consensus.
 - Daily checklist appears.
 - Builder tab opens.
 - Readiness score renders.
@@ -413,8 +431,8 @@ Status:
 
 ```text
 Working local static website.
-Core learning tracker complete.
-LLM, Data Lake, and Blockchain Consensus category tracks added.
+Multi-track learning tracker complete.
+LLM, Data Lake, and Blockchain Consensus each have lessons, study material, quizzes, labs, notes, roadmap, and progress.
 Thesis-prep features added.
 Ready for daily use.
 ```

@@ -577,6 +577,550 @@ const categoryTracks = [
   }
 ];
 
+const dataLakeLessons = [
+  {
+    id: 1,
+    week: "Week 1: Data lake basics",
+    title: "What a data lake is",
+    focus: "A data lake stores raw and processed data in files so different tools can analyze it later. The hard part is keeping the lake organized enough to trust.",
+    learn: "Learn why teams use data lakes instead of only relational databases.",
+    practice: "List three kinds of data a university or shop might put in a lake.",
+    thesis: "Write one question about organizing raw data for analysis.",
+    resource: "HDFS architecture guide",
+    url: "https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html"
+  },
+  {
+    id: 2,
+    week: "Week 1: Data lake basics",
+    title: "Warehouse vs lake",
+    focus: "A warehouse usually stores cleaned, structured tables for analytics. A lake can store raw files first and decide structure later.",
+    learn: "Compare schema-on-write and schema-on-read.",
+    practice: "Put CSV logs, images, and sales tables into warehouse or lake buckets.",
+    thesis: "Write when a data lake is useful and when it becomes messy.",
+    resource: "Delta Lake documentation",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    id: 3,
+    week: "Week 1: Data lake basics",
+    title: "Files and object storage",
+    focus: "Modern data lakes often use cloud object storage or distributed file systems. The basic unit is still files, not database rows.",
+    learn: "Study files, folders, buckets, and object keys.",
+    practice: "Design folder names for one month of event logs.",
+    thesis: "Write how file layout could affect query performance.",
+    resource: "HDFS architecture guide",
+    url: "https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html"
+  },
+  {
+    id: 4,
+    week: "Week 1: Data lake basics",
+    title: "Columnar files and Parquet",
+    focus: "Columnar file formats store values by column, which helps analytical queries read only the columns they need.",
+    learn: "Read what a columnar format is used for.",
+    practice: "Imagine a table with 20 columns; choose only 3 needed for a query.",
+    thesis: "Write why columnar storage might be faster for analytics.",
+    resource: "Apache Parquet documentation",
+    url: "https://parquet.apache.org/docs/"
+  },
+  {
+    id: 5,
+    week: "Week 1: Data lake basics",
+    title: "Schema and schema evolution",
+    focus: "A schema describes fields and types. Real datasets change, so a lake needs rules for adding, removing, or renaming fields safely.",
+    learn: "Study what happens when a new column appears.",
+    practice: "Add a new field to a user event record and note what could break.",
+    thesis: "Write a small schema evolution experiment idea.",
+    resource: "Apache Iceberg schema evolution",
+    url: "https://iceberg.apache.org/docs/latest/evolution/"
+  },
+  {
+    id: 6,
+    week: "Week 1: Data lake basics",
+    title: "Partitioning",
+    focus: "Partitioning splits files by values such as date or country. Good partitioning can reduce how much data a query scans.",
+    learn: "Learn why partitioning by date is common.",
+    practice: "Choose partitions for click logs: date, user, page, or country.",
+    thesis: "Write how you could compare two partition strategies.",
+    resource: "Apache Iceberg partitioning",
+    url: "https://iceberg.apache.org/docs/latest/partitioning/"
+  },
+  {
+    id: 7,
+    week: "Week 1: Data lake basics",
+    title: "Weekly checkpoint",
+    focus: "You can now explain the lake idea: files, formats, schemas, and partitions turn raw storage into analyzable data.",
+    learn: "Review days 1-6.",
+    practice: "Draw a pipeline from raw logs to analytical table.",
+    thesis: "Pick one Data Lake thesis direction: layout, schema, quality, or performance.",
+    resource: "Delta Lake documentation",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    id: 8,
+    week: "Week 2: Lakehouse systems",
+    title: "Metadata catalogs",
+    focus: "A catalog records what datasets exist, where files are stored, and what schemas they use. Without metadata, a data lake becomes hard to search.",
+    learn: "Study why file lists and schemas need a catalog.",
+    practice: "Write metadata fields for a dataset: owner, path, schema, update time.",
+    thesis: "Write how metadata improves reproducibility.",
+    resource: "Apache Iceberg catalog docs",
+    url: "https://iceberg.apache.org/docs/latest/configuration/"
+  },
+  {
+    id: 9,
+    week: "Week 2: Lakehouse systems",
+    title: "ETL and ELT",
+    focus: "ETL transforms data before loading. ELT loads first and transforms later. Data lakes often support both patterns.",
+    learn: "Compare ETL and ELT at a high level.",
+    practice: "Classify cleaning duplicate rows as ETL or ELT.",
+    thesis: "Write one pipeline step you could test with a small dataset.",
+    resource: "Delta Lake documentation",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    id: 10,
+    week: "Week 2: Lakehouse systems",
+    title: "Data quality rules",
+    focus: "Data quality means checking expectations such as not-null fields, valid ranges, unique IDs, and consistent timestamps.",
+    learn: "Read about data quality checks conceptually.",
+    practice: "Write three rules for a student attendance dataset.",
+    thesis: "Write a thesis question about detecting bad records before analysis.",
+    resource: "Delta Lake constraints",
+    url: "https://docs.delta.io/latest/delta-constraints.html"
+  },
+  {
+    id: 11,
+    week: "Week 2: Lakehouse systems",
+    title: "Transaction logs",
+    focus: "Table formats such as Delta Lake track changes in a transaction log so readers know which files belong to the current table version.",
+    learn: "Study why a transaction log helps reliability.",
+    practice: "Describe what happens when a file is added, removed, or replaced.",
+    thesis: "Write how version history could support reproducible analysis.",
+    resource: "Delta Lake transaction log",
+    url: "https://docs.delta.io/latest/delta-transaction-log.html"
+  },
+  {
+    id: 12,
+    week: "Week 2: Lakehouse systems",
+    title: "Snapshots and time travel",
+    focus: "Some lakehouse table formats let users query an older version of a table. This helps debugging and reproducibility.",
+    learn: "Read about snapshots or time travel.",
+    practice: "Imagine a wrong update and how you would inspect the previous version.",
+    thesis: "Write a small experiment comparing current vs old table versions.",
+    resource: "Apache Iceberg reliability",
+    url: "https://iceberg.apache.org/docs/latest/reliability/"
+  },
+  {
+    id: 13,
+    week: "Week 2: Lakehouse systems",
+    title: "Query performance experiment",
+    focus: "A beginner Data Lake thesis can compare file layout, partitioning, and format choices using query time, scanned data, or file count.",
+    learn: "Study one metric for query performance.",
+    practice: "Design a two-version dataset layout to compare.",
+    thesis: "Write method: I will compare X and Y using metric M.",
+    resource: "Apache Iceberg performance",
+    url: "https://iceberg.apache.org/docs/latest/performance/"
+  },
+  {
+    id: 14,
+    week: "Week 2: Lakehouse systems",
+    title: "Data Lake thesis checkpoint",
+    focus: "A strong beginner thesis is usually a small comparison: partition strategy, data quality rule set, table format feature, or query layout.",
+    learn: "Review your Data Lake notes.",
+    practice: "Choose one dataset and one measurable metric.",
+    thesis: "Draft a 5-line Data Lake proposal.",
+    resource: "Apache Iceberg documentation",
+    url: "https://iceberg.apache.org/docs/latest/"
+  }
+];
+
+const blockchainConsensusLessons = [
+  {
+    id: 1,
+    week: "Week 1: Consensus basics",
+    title: "Why consensus is needed",
+    focus: "Consensus lets many computers agree on one shared state even when they do not all receive messages at the same time.",
+    learn: "Learn the distributed systems problem: agreement without one trusted machine.",
+    practice: "Imagine three servers deciding one account balance.",
+    thesis: "Write one problem that happens if nodes disagree.",
+    resource: "Bitcoin whitepaper",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    id: 2,
+    week: "Week 1: Consensus basics",
+    title: "Failures and assumptions",
+    focus: "Consensus algorithms make assumptions about crashes, malicious nodes, message delay, and clocks. The assumptions decide what the algorithm can guarantee.",
+    learn: "Compare crash failure and Byzantine failure.",
+    practice: "Classify a slow node, offline node, and lying node.",
+    thesis: "Write why assumptions must be clear in a consensus thesis.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 3,
+    week: "Week 1: Consensus basics",
+    title: "Blocks and hash links",
+    focus: "A blockchain groups transactions into blocks. Each block points to a previous block, creating a tamper-evident chain.",
+    learn: "Study block, hash, previous hash, and transaction list.",
+    practice: "Draw three blocks connected by previous hash.",
+    thesis: "Write how hash links help detect changes.",
+    resource: "Bitcoin whitepaper",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    id: 4,
+    week: "Week 1: Consensus basics",
+    title: "Forks and confirmations",
+    focus: "A fork happens when nodes temporarily see different valid histories. Confirmation depth reduces the chance that a transaction is reversed.",
+    learn: "Read the basic idea of longest-chain selection.",
+    practice: "Draw two branches and choose the longer chain.",
+    thesis: "Write how fork frequency could become a metric.",
+    resource: "Bitcoin whitepaper",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    id: 5,
+    week: "Week 1: Consensus basics",
+    title: "Proof of Work",
+    focus: "Proof of Work makes block creation costly by requiring computational effort. This helps secure the chain but uses energy and limits throughput.",
+    learn: "Study mining difficulty and nonce at a high level.",
+    practice: "Explain why higher difficulty slows block creation.",
+    thesis: "Write a simple PoW simulation topic.",
+    resource: "Bitcoin whitepaper",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    id: 6,
+    week: "Week 1: Consensus basics",
+    title: "Proof of Stake",
+    focus: "Proof of Stake chooses validators based on stake and protocol rules instead of raw computation. It changes energy cost and security assumptions.",
+    learn: "Compare PoW miners and PoS validators.",
+    practice: "List one benefit and one risk of stake-based voting.",
+    thesis: "Write a comparison question about PoW and PoS.",
+    resource: "Ethereum proof of stake",
+    url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
+  },
+  {
+    id: 7,
+    week: "Week 1: Consensus basics",
+    title: "Weekly checkpoint",
+    focus: "You can now explain blocks, forks, confirmations, PoW, PoS, and why distributed agreement is difficult.",
+    learn: "Review days 1-6.",
+    practice: "Explain consensus in four sentences.",
+    thesis: "Pick one consensus direction: simulation, comparison, or security assumptions.",
+    resource: "The Latest Gossip on BFT Consensus",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 8,
+    week: "Week 2: BFT and experiments",
+    title: "Byzantine Fault Tolerance",
+    focus: "BFT algorithms try to keep agreement even if some participants behave incorrectly or maliciously.",
+    learn: "Read the PBFT abstract or introduction.",
+    practice: "For 4 nodes, mark one node as faulty and ask if 3 honest nodes can agree.",
+    thesis: "Write why BFT is useful for permissioned blockchains.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 9,
+    week: "Week 2: BFT and experiments",
+    title: "PBFT voting phases",
+    focus: "PBFT-style consensus uses multiple communication phases so honest nodes can confirm they saw the same proposal.",
+    learn: "Learn pre-prepare, prepare, and commit at a high level.",
+    practice: "Count messages for 4 nodes sending votes to each other.",
+    thesis: "Write a message-complexity experiment idea.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    id: 10,
+    week: "Week 2: BFT and experiments",
+    title: "Finality",
+    focus: "Finality means a decision should not be reversed. Some systems have probabilistic finality; BFT-style systems can offer faster deterministic finality under assumptions.",
+    learn: "Compare probabilistic and deterministic finality.",
+    practice: "Classify Bitcoin confirmations and PBFT commit as finality styles.",
+    thesis: "Write how finality affects user experience.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 11,
+    week: "Week 2: BFT and experiments",
+    title: "Safety and liveness",
+    focus: "Safety means bad things do not happen, such as two conflicting decisions. Liveness means good things eventually happen, such as new blocks being committed.",
+    learn: "Study safety vs liveness with simple examples.",
+    practice: "Classify a fork as safety issue or a stalled chain as liveness issue.",
+    thesis: "Write a metric for safety or liveness in a simulation.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 12,
+    week: "Week 2: BFT and experiments",
+    title: "Latency and throughput",
+    focus: "Consensus protocols trade off speed, number of messages, validator count, and fault tolerance. More communication can improve agreement but reduce throughput.",
+    learn: "Learn latency and throughput as performance metrics.",
+    practice: "Predict what happens to message count when validators increase from 4 to 10.",
+    thesis: "Write a performance comparison question.",
+    resource: "Tendermint consensus paper",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 13,
+    week: "Week 2: BFT and experiments",
+    title: "Simulation design",
+    focus: "A beginner thesis can simulate consensus instead of building a real blockchain. You can model nodes, messages, delays, and failures.",
+    learn: "Design variables: node count, faulty nodes, delay, and timeout.",
+    practice: "Create a table with input variables and output metrics.",
+    thesis: "Write method: I will simulate X while changing Y and measuring Z.",
+    resource: "The Latest Gossip on BFT Consensus",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    id: 14,
+    week: "Week 2: BFT and experiments",
+    title: "Consensus thesis checkpoint",
+    focus: "A strong beginner consensus thesis usually compares clear tradeoffs: finality, messages, latency, fault tolerance, or fork behavior.",
+    learn: "Review your consensus notes.",
+    practice: "Choose one algorithm pair or one simulation variable.",
+    thesis: "Draft a 5-line Blockchain Consensus proposal.",
+    resource: "Practical Byzantine Fault Tolerance",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  }
+];
+
+const dataLakeStudyMaterials = {
+  1: {
+    text: [
+      "A data lake is a storage architecture for keeping many kinds of data: logs, CSV files, JSON, images, tables, and processed datasets. Unlike a normal database, the lake does not require every dataset to be perfectly modeled before it is stored.",
+      "The danger is that a lake can become a data swamp. The CS problem is designing file layout, metadata, validation, and query patterns so data stays usable."
+    ],
+    terms: ["raw data", "processed data", "data swamp"],
+    cs: "Think of a data lake as a file-based system problem: storage layout plus metadata decides whether analysis is reliable."
+  },
+  2: {
+    text: [
+      "A data warehouse usually stores cleaned tables with a planned schema. A data lake can store raw data first, then let different tools interpret it later.",
+      "Schema-on-write means data is shaped before storage. Schema-on-read means data is interpreted when it is queried."
+    ],
+    terms: ["warehouse", "schema-on-write", "schema-on-read"],
+    cs: "This is a design tradeoff: stricter structure improves reliability, while flexible storage supports more data types."
+  },
+  3: {
+    text: [
+      "Data lakes usually store files in object storage or distributed file systems. Paths and file names become part of the system design.",
+      "A query engine may need to list many files before reading data, so too many tiny files or a poor folder layout can slow analysis."
+    ],
+    terms: ["object storage", "bucket", "file layout"],
+    cs: "Storage organization affects algorithmic cost: listing files, pruning files, and reading bytes."
+  },
+  4: {
+    text: [
+      "Columnar formats store values by column instead of by row. Analytics often asks for a few columns across many rows, so columnar storage can avoid reading unnecessary fields.",
+      "Parquet is a common open columnar format in data lakes."
+    ],
+    terms: ["columnar format", "Parquet", "scan"],
+    cs: "You can measure the benefit by comparing query time or bytes scanned for row-like CSV versus columnar Parquet."
+  },
+  5: {
+    text: [
+      "A schema defines fields and their types. Real data changes over time: new columns appear, old fields disappear, and types sometimes change.",
+      "Schema evolution is the controlled process of changing a dataset while keeping old data and queries understandable."
+    ],
+    terms: ["schema", "type", "schema evolution"],
+    cs: "Schema evolution is a compatibility problem: can old readers and new writers safely use the same dataset?"
+  },
+  6: {
+    text: [
+      "Partitioning splits data into groups, often by date or region. A query that filters by partition value can skip many files.",
+      "Bad partitioning creates too many small files or does not match real query patterns."
+    ],
+    terms: ["partition", "pruning", "query pattern"],
+    cs: "This is a good thesis variable: change partition strategy and measure query performance."
+  },
+  7: {
+    text: [
+      "The first week gives you enough vocabulary to discuss data lakes as systems: files, formats, schemas, partitions, and metadata.",
+      "A manageable thesis should compare one design choice with one metric, not try to build a full company-scale platform."
+    ],
+    terms: ["layout", "metric", "tradeoff"],
+    cs: "Keep the experiment small: one dataset, two layouts, one query workload, and one or two metrics."
+  },
+  8: {
+    text: [
+      "A metadata catalog helps users find datasets and understand their structure. It records names, schemas, locations, owners, and update times.",
+      "Without a catalog, people must guess which files are current and what each field means."
+    ],
+    terms: ["catalog", "metadata", "dataset owner"],
+    cs: "Metadata is indexing for human and machine discovery; better metadata reduces search and interpretation cost."
+  },
+  9: {
+    text: [
+      "ETL means extract, transform, load. ELT means extract, load, transform. In data lakes, raw data is often loaded first and transformed later.",
+      "The right choice depends on data quality, cost, and how quickly raw data must be available."
+    ],
+    terms: ["ETL", "ELT", "pipeline"],
+    cs: "A pipeline can be modeled as steps with inputs, outputs, validation rules, and failure points."
+  },
+  10: {
+    text: [
+      "Data quality rules check whether data is usable. Common checks include required fields, valid ranges, unique IDs, and timestamp consistency.",
+      "Quality checks make analytics more trustworthy and give your thesis clear measurable outcomes."
+    ],
+    terms: ["not-null", "valid range", "duplicate"],
+    cs: "A rule-based validator is simple to implement and easy to evaluate with precision, recall, or number of detected errors."
+  },
+  11: {
+    text: [
+      "A transaction log records table changes. Instead of guessing which files are active, a reader can follow the log to find the current version.",
+      "This helps with reliability because updates become explicit operations."
+    ],
+    terms: ["transaction log", "commit", "table version"],
+    cs: "The log acts like system state. A thesis can study how version tracking improves reproducibility."
+  },
+  12: {
+    text: [
+      "Snapshots capture a table at a point in time. Time travel lets a user query an older snapshot to debug or reproduce an analysis.",
+      "This is useful when data changes but research results need to be explainable later."
+    ],
+    terms: ["snapshot", "time travel", "reproducibility"],
+    cs: "Versioned data turns data management into a state history problem."
+  },
+  13: {
+    text: [
+      "A performance experiment needs a workload and metrics. Example metrics are query time, number of scanned files, bytes read, and storage size.",
+      "The strongest beginner setup compares two simple designs under the same queries."
+    ],
+    terms: ["workload", "query time", "bytes scanned"],
+    cs: "Control variables carefully: same data, same machine, same queries, only one design choice changed."
+  },
+  14: {
+    text: [
+      "Your Data Lake thesis can be small and still valid if it has a clear question, method, metric, and limitation.",
+      "Good beginner directions include partitioning, quality rules, schema evolution examples, and table format comparison."
+    ],
+    terms: ["research question", "method", "limitation"],
+    cs: "A thesis proposal should explain what changes, what is measured, and why the result matters."
+  }
+};
+
+const blockchainConsensusStudyMaterials = {
+  1: {
+    text: [
+      "Consensus is the problem of getting distributed nodes to agree. In blockchain, they must agree on which transactions happened and in what order.",
+      "Without consensus, two users could see different histories and the system would not be reliable."
+    ],
+    terms: ["node", "agreement", "shared state"],
+    cs: "Consensus is a distributed algorithm problem, not only a cryptocurrency topic."
+  },
+  2: {
+    text: [
+      "A crash failure means a node stops. A Byzantine failure means a node may act incorrectly, lie, or send conflicting messages.",
+      "Consensus algorithms are only meaningful when their failure model is clear."
+    ],
+    terms: ["crash failure", "Byzantine failure", "assumption"],
+    cs: "Your thesis must state the fault model before comparing algorithms."
+  },
+  3: {
+    text: [
+      "A block contains data and points to the previous block with a hash. Changing an old block changes its hash, which breaks later links.",
+      "This does not solve consensus alone, but it makes history tamper-evident."
+    ],
+    terms: ["block", "hash", "previous hash"],
+    cs: "Hash links are a data structure technique for detecting changes."
+  },
+  4: {
+    text: [
+      "Forks happen when nodes temporarily build on different blocks. Longest-chain style systems resolve forks by choosing the branch with more accumulated work or weight.",
+      "Confirmations reduce risk because older blocks become harder to replace."
+    ],
+    terms: ["fork", "branch", "confirmation"],
+    cs: "Fork behavior can be simulated by changing network delay and block interval."
+  },
+  5: {
+    text: [
+      "Proof of Work requires miners to solve a costly puzzle. The puzzle makes it expensive to rewrite history.",
+      "The tradeoff is energy cost and limited throughput."
+    ],
+    terms: ["miner", "nonce", "difficulty"],
+    cs: "PoW is easy to simulate at toy scale by changing difficulty and measuring attempts."
+  },
+  6: {
+    text: [
+      "Proof of Stake chooses validators using stake and protocol rules. It avoids mining work but depends on different incentives and penalties.",
+      "The design question is how to choose validators and punish bad behavior."
+    ],
+    terms: ["validator", "stake", "slashing"],
+    cs: "Compare consensus mechanisms by assumptions, cost, finality, and attack model."
+  },
+  7: {
+    text: [
+      "You now have the vocabulary for blockchain consensus: nodes, blocks, forks, PoW, PoS, and failures.",
+      "A beginner thesis can focus on simulation and metrics instead of production blockchain engineering."
+    ],
+    terms: ["simulation", "metric", "tradeoff"],
+    cs: "Keep scope small: one simplified algorithm, one variable, one output metric."
+  },
+  8: {
+    text: [
+      "Byzantine Fault Tolerance means the system can still agree when some nodes behave badly.",
+      "Classic BFT protocols often need enough honest nodes to outvote faulty behavior."
+    ],
+    terms: ["BFT", "faulty node", "honest node"],
+    cs: "BFT is useful for permissioned systems where validators are known."
+  },
+  9: {
+    text: [
+      "PBFT-style algorithms use phases of voting. Nodes first hear a proposal, then exchange votes to prove they saw the same proposal.",
+      "The cost is many messages between validators."
+    ],
+    terms: ["pre-prepare", "prepare", "commit"],
+    cs: "Message count is a measurable algorithmic cost."
+  },
+  10: {
+    text: [
+      "Finality describes when a decision should no longer be reversed. PoW systems often use probabilistic finality; BFT systems can commit final decisions under assumptions.",
+      "Different finality styles affect speed and user confidence."
+    ],
+    terms: ["finality", "probabilistic", "deterministic"],
+    cs: "Finality can be compared as confirmation depth, commit time, or reversal probability."
+  },
+  11: {
+    text: [
+      "Safety means two conflicting decisions should not both be accepted. Liveness means the system should keep making progress.",
+      "Some network problems can protect safety while hurting liveness."
+    ],
+    terms: ["safety", "liveness", "stall"],
+    cs: "These are correctness properties; use them to organize your literature review."
+  },
+  12: {
+    text: [
+      "Latency is how long a decision takes. Throughput is how many transactions or blocks the system handles per time unit.",
+      "More validators can improve decentralization but may increase message cost."
+    ],
+    terms: ["latency", "throughput", "validator count"],
+    cs: "Performance evaluation needs fixed assumptions and repeated runs."
+  },
+  13: {
+    text: [
+      "A consensus simulation can model nodes, messages, delays, leader choice, and faulty behavior.",
+      "You do not need a full blockchain to study one consensus tradeoff."
+    ],
+    terms: ["model", "variable", "output metric"],
+    cs: "A small simulator is acceptable if the assumptions and limits are explicit."
+  },
+  14: {
+    text: [
+      "Your consensus thesis should be narrow: compare one or two algorithms, or test one variable in a simulation.",
+      "Good metrics include message count, commit latency, fork frequency, or tolerance to faulty nodes."
+    ],
+    terms: ["comparison", "message count", "commit latency"],
+    cs: "The proposal should connect algorithm behavior to a metric you can actually measure."
+  }
+};
+
 const studyMaterials = {
   1: {
     text: [
@@ -1421,4 +1965,196 @@ const library = [
     url: "https://web.stanford.edu/class/cs224n/index.html"
   }
 ];
+
+const dataLakeQuizzes = {
+  1: {
+    question: "What is the main purpose of a data lake?",
+    choices: ["Store many kinds of raw and processed data for later analysis.", "Only store one perfectly designed table.", "Replace every file with a chatbot."],
+    answer: 0,
+    explanation: "A data lake stores flexible datasets, but still needs organization and metadata."
+  },
+  2: {
+    question: "What does schema-on-read mean?",
+    choices: ["Data is interpreted when it is queried.", "Data has no structure forever.", "Data is deleted before storage."],
+    answer: 0,
+    explanation: "Schema-on-read delays interpretation until analysis time."
+  },
+  3: {
+    question: "Why does file layout matter in a data lake?",
+    choices: ["It affects file discovery, pruning, and query cost.", "It only changes icon colors.", "It prevents all data errors automatically."],
+    answer: 0,
+    explanation: "Query engines often need to list and scan files, so layout affects performance."
+  },
+  4: {
+    question: "Why are columnar formats useful for analytics?",
+    choices: ["Queries can read only needed columns.", "They force every query to read every row as text.", "They remove the need for schemas."],
+    answer: 0,
+    explanation: "Columnar storage helps analytical queries skip unused columns."
+  },
+  5: {
+    question: "What is schema evolution?",
+    choices: ["Changing a dataset schema in a controlled way over time.", "Never allowing new columns.", "Randomly renaming files."],
+    answer: 0,
+    explanation: "Schema evolution handles real data changes while protecting compatibility."
+  },
+  6: {
+    question: "What is a common reason to partition data by date?",
+    choices: ["Many queries filter by time, so old partitions can be skipped.", "Dates make files look nicer.", "Partitioning by date encrypts the data."],
+    answer: 0,
+    explanation: "Partition pruning can reduce the amount of data scanned."
+  },
+  7: {
+    question: "What is a manageable Data Lake thesis shape?",
+    choices: ["Compare one design choice with one or two metrics.", "Build an entire cloud platform alone.", "Avoid all measurements."],
+    answer: 0,
+    explanation: "Small, controlled comparisons are realistic for beginner CS research."
+  },
+  8: {
+    question: "What does a metadata catalog help with?",
+    choices: ["Finding datasets and understanding schemas and locations.", "Training an LLM by itself.", "Making bad data correct automatically."],
+    answer: 0,
+    explanation: "Catalog metadata makes datasets discoverable and understandable."
+  },
+  9: {
+    question: "In ELT, when does transformation usually happen?",
+    choices: ["After data is loaded.", "Before extraction.", "Never."],
+    answer: 0,
+    explanation: "ELT loads first, then transforms inside or near the analytical system."
+  },
+  10: {
+    question: "Which is an example of a data quality rule?",
+    choices: ["Student ID must not be empty.", "All files must be blue.", "Queries must be written at night."],
+    answer: 0,
+    explanation: "Not-null checks are common data quality rules."
+  },
+  11: {
+    question: "What does a transaction log help a lakehouse table know?",
+    choices: ["Which files belong to the current table version.", "The user's favorite color.", "The weather forecast."],
+    answer: 0,
+    explanation: "Transaction logs make table changes explicit and reliable."
+  },
+  12: {
+    question: "Why is time travel useful in data tables?",
+    choices: ["It helps inspect older versions for debugging and reproducibility.", "It changes the real date.", "It removes the need for backups in all cases."],
+    answer: 0,
+    explanation: "Older snapshots can explain or reproduce previous results."
+  },
+  13: {
+    question: "Which metric fits a Data Lake performance experiment?",
+    choices: ["Query time or bytes scanned.", "Keyboard color.", "Number of presentation slides only."],
+    answer: 0,
+    explanation: "Query time and bytes scanned directly measure performance effects."
+  },
+  14: {
+    question: "What should your Data Lake proposal clearly state?",
+    choices: ["Question, method, metric, and limitation.", "Only a broad topic name.", "Only tool logos."],
+    answer: 0,
+    explanation: "A clear proposal must be narrow and measurable."
+  }
+};
+
+const blockchainConsensusQuizzes = {
+  1: {
+    question: "What is consensus in distributed systems?",
+    choices: ["Nodes agreeing on one shared state or decision.", "One computer ignoring all others.", "A password storage format."],
+    answer: 0,
+    explanation: "Consensus is about agreement among distributed nodes."
+  },
+  2: {
+    question: "What is a Byzantine failure?",
+    choices: ["A node may behave incorrectly or maliciously.", "A node only stops quietly.", "A node becomes faster."],
+    answer: 0,
+    explanation: "Byzantine faults include arbitrary or dishonest behavior."
+  },
+  3: {
+    question: "Why do blocks include the previous block hash?",
+    choices: ["To link history and make tampering visible.", "To make images load faster.", "To remove all network delay."],
+    answer: 0,
+    explanation: "Changing old data changes hashes and breaks later links."
+  },
+  4: {
+    question: "What is a blockchain fork?",
+    choices: ["Different nodes temporarily seeing different valid branches.", "A database backup file.", "A type of encryption key only."],
+    answer: 0,
+    explanation: "Forks are competing histories that the protocol must resolve."
+  },
+  5: {
+    question: "What does Proof of Work make expensive?",
+    choices: ["Creating or rewriting blocks.", "Reading the website.", "Writing a thesis title."],
+    answer: 0,
+    explanation: "PoW uses computational cost to protect the chain."
+  },
+  6: {
+    question: "In Proof of Stake, what role do validators play?",
+    choices: ["They help propose or vote on blocks based on protocol rules.", "They compress images.", "They remove all failures."],
+    answer: 0,
+    explanation: "Validators participate in consensus using stake-based rules."
+  },
+  7: {
+    question: "What is a good beginner consensus thesis method?",
+    choices: ["A small simulation with clear variables and metrics.", "A full global blockchain launch.", "Only opinions with no experiment."],
+    answer: 0,
+    explanation: "Simulation is realistic and measurable for a student project."
+  },
+  8: {
+    question: "What does BFT try to tolerate?",
+    choices: ["Some faulty or malicious nodes.", "Only perfect networks.", "Only empty blocks."],
+    answer: 0,
+    explanation: "BFT protocols aim to maintain agreement despite faulty behavior."
+  },
+  9: {
+    question: "Why can PBFT-style protocols become expensive as validators increase?",
+    choices: ["Many validators exchange many messages.", "They require no communication.", "They store no data."],
+    answer: 0,
+    explanation: "Message complexity is a key cost in BFT-style consensus."
+  },
+  10: {
+    question: "What does finality mean?",
+    choices: ["A decision should not be reversed after it is final.", "A node has the largest screen.", "A transaction has no data."],
+    answer: 0,
+    explanation: "Finality is about confidence that accepted history will not change."
+  },
+  11: {
+    question: "Which statement describes liveness?",
+    choices: ["The system eventually keeps making progress.", "The system accepts two conflicting blocks.", "The system deletes all messages."],
+    answer: 0,
+    explanation: "Liveness means good events eventually happen."
+  },
+  12: {
+    question: "What is throughput?",
+    choices: ["How much work the system processes per time unit.", "How old a block is.", "How many colors the UI has."],
+    answer: 0,
+    explanation: "Throughput measures processing rate."
+  },
+  13: {
+    question: "What can a consensus simulator vary?",
+    choices: ["Node count, delay, faulty nodes, or timeout.", "Only font size.", "Only the project folder name."],
+    answer: 0,
+    explanation: "These variables directly affect consensus behavior."
+  },
+  14: {
+    question: "Which metric fits a consensus thesis?",
+    choices: ["Message count, commit latency, or fork frequency.", "Number of CSS files only.", "Color saturation."],
+    answer: 0,
+    explanation: "These metrics connect to consensus performance and correctness."
+  }
+};
+
+const tracks = {
+  llm: {
+    lessons,
+    studyMaterials,
+    quizzes
+  },
+  "data-lake": {
+    lessons: dataLakeLessons,
+    studyMaterials: dataLakeStudyMaterials,
+    quizzes: dataLakeQuizzes
+  },
+  "blockchain-consensus": {
+    lessons: blockchainConsensusLessons,
+    studyMaterials: blockchainConsensusStudyMaterials,
+    quizzes: blockchainConsensusQuizzes
+  }
+};
 

@@ -1,5 +1,6 @@
 ﻿const storageKeys = {
   startDate: "llm-thesis-v2:start-date",
+  trackStartDates: "llm-thesis-v4:track-start-dates",
   completed: "llm-thesis-v2:completed",
   completedOn: "llm-thesis-v2:completed-on",
   completedDates: "llm-thesis-v2:completed-dates",
@@ -8,31 +9,79 @@
   reviewAnswers: "llm-thesis-v2:review-answers",
   studyRead: "llm-thesis-v2:study-read",
   builder: "llm-thesis-v2:builder",
+  activeTrack: "llm-thesis-v4:active-track",
   activeLesson: "llm-thesis-v2:active-lesson",
+  activeLessonByTrack: "llm-thesis-v4:active-lesson-by-track",
   lastOpenedDate: "llm-thesis-v2:last-opened-date"
 };
 
-function getInitialLessonId() {
-  const todayKey = localDateKey();
-  const lastOpened = localStorage.getItem(storageKeys.lastOpenedDate);
-  if (lastOpened !== todayKey) {
-    localStorage.setItem(storageKeys.lastOpenedDate, todayKey);
-    localStorage.setItem(storageKeys.activeLesson, String(getTodayLesson().id));
-    return getTodayLesson().id;
-  }
-  return Number(localStorage.getItem(storageKeys.activeLesson)) || getTodayLesson().id;
+const defaultTrackId = "llm";
+
+function getStoredTrackId() {
+  const stored = localStorage.getItem(storageKeys.activeTrack);
+  return tracks[stored] ? stored : defaultTrackId;
 }
 
+function makeLessonKey(trackId, lessonId) {
+  return `${trackId}:${lessonId}`;
+}
+
+function normalizeLessonKey(value) {
+  const key = String(value);
+  return key.includes(":") ? key : makeLessonKey(defaultTrackId, key);
+}
+
+function normalizeLessonSet(values) {
+  return values.map((value) => normalizeLessonKey(value));
+}
+
+function normalizeLessonMap(map) {
+  return Object.entries(map).reduce((acc, [key, value]) => {
+    acc[normalizeLessonKey(key)] = value;
+    return acc;
+  }, {});
+}
+
+function getTrack(trackId = getStoredTrackId()) {
+  return tracks[trackId] || tracks[defaultTrackId];
+}
+
+function getTrackLessons(trackId = getStoredTrackId()) {
+  return getTrack(trackId).lessons;
+}
+
+function getInitialLessonId(trackId) {
+  const todayKey = localDateKey();
+  const lastOpened = localStorage.getItem(storageKeys.lastOpenedDate);
+  const activeLessonsByTrack = readJson(storageKeys.activeLessonByTrack, {});
+  if (lastOpened !== todayKey) {
+    localStorage.setItem(storageKeys.lastOpenedDate, todayKey);
+    activeLessonsByTrack[trackId] = getTodayLesson(trackId).id;
+    writeJson(storageKeys.activeLessonByTrack, activeLessonsByTrack);
+    if (trackId === defaultTrackId) {
+      localStorage.setItem(storageKeys.activeLesson, String(getTodayLesson(trackId).id));
+    }
+    return getTodayLesson(trackId).id;
+  }
+  return Number(activeLessonsByTrack[trackId])
+    || (trackId === defaultTrackId ? Number(localStorage.getItem(storageKeys.activeLesson)) : 0)
+    || getTodayLesson(trackId).id;
+}
+
+const hasStoredTrackChoice = Boolean(localStorage.getItem(storageKeys.activeTrack));
+const initialTrackId = getStoredTrackId();
+
 const state = {
-  completed: new Set(readJson(storageKeys.completed, [])),
-  completedOn: readJson(storageKeys.completedOn, {}),
+  completed: new Set(normalizeLessonSet(readJson(storageKeys.completed, []))),
+  completedOn: normalizeLessonMap(readJson(storageKeys.completedOn, {})),
   completedDates: new Set(readJson(storageKeys.completedDates, [])),
-  notes: readJson(storageKeys.notes, {}),
-  quizAnswers: readJson(storageKeys.quizAnswers, {}),
-  reviewAnswers: readJson(storageKeys.reviewAnswers, {}),
-  studyRead: readJson(storageKeys.studyRead, {}),
+  notes: normalizeLessonMap(readJson(storageKeys.notes, {})),
+  quizAnswers: normalizeLessonMap(readJson(storageKeys.quizAnswers, {})),
+  reviewAnswers: normalizeLessonMap(readJson(storageKeys.reviewAnswers, {})),
+  studyRead: normalizeLessonMap(readJson(storageKeys.studyRead, {})),
   builder: readJson(storageKeys.builder, {}),
-  activeLessonId: getInitialLessonId(),
+  activeTrack: initialTrackId,
+  activeLessonId: getInitialLessonId(initialTrackId),
   activeFilter: "all",
   resetArmed: false
 };
@@ -43,6 +92,7 @@ const elements = {
   progressPercent: document.querySelector("#progressPercent"),
   progressBar: document.querySelector("#progressBar"),
   todayTitle: document.querySelector("#todayTitle"),
+  trackSelect: document.querySelector("#trackSelect"),
   datePill: document.querySelector("#datePill"),
   lessonWeek: document.querySelector("#lessonWeek"),
   lessonTitle: document.querySelector("#lessonTitle"),
@@ -114,10 +164,22 @@ function localDateKey(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function getStartDate() {
-  let start = localStorage.getItem(storageKeys.startDate);
+function getActiveTrackId() {
+  return state.activeTrack || defaultTrackId;
+}
+
+function getStartDate(trackId = getActiveTrackId()) {
+  const startDates = readJson(storageKeys.trackStartDates, {});
+  let start = startDates[trackId];
+  if (!start && trackId === defaultTrackId) {
+    start = localStorage.getItem(storageKeys.startDate);
+  }
   if (!start) {
     start = localDateKey();
+  }
+  startDates[trackId] = start;
+  writeJson(storageKeys.trackStartDates, startDates);
+  if (trackId === defaultTrackId && !localStorage.getItem(storageKeys.startDate)) {
     localStorage.setItem(storageKeys.startDate, start);
   }
   return start;
@@ -130,21 +192,66 @@ function daysBetween(startKey, end = new Date()) {
   return Math.max(0, Math.floor((current - start) / 86400000));
 }
 
-function getTodayLesson() {
-  const index = daysBetween(getStartDate()) % lessons.length;
-  return lessons[index];
+function getTodayLesson(trackId = getActiveTrackId()) {
+  const activeLessons = getTrackLessons(trackId);
+  const index = daysBetween(getStartDate(trackId)) % activeLessons.length;
+  return activeLessons[index];
 }
 
-function getLessonById(id) {
-  return lessons.find((lesson) => lesson.id === id) || lessons[0];
+function getLessonById(id, trackId = getActiveTrackId()) {
+  const activeLessons = getTrackLessons(trackId);
+  return activeLessons.find((lesson) => lesson.id === id) || activeLessons[0];
+}
+
+function getActiveTrack() {
+  return getTrack(getActiveTrackId());
+}
+
+function getActiveLessons() {
+  return getActiveTrack().lessons;
+}
+
+function getActiveQuizzes() {
+  return getActiveTrack().quizzes;
+}
+
+function getLessonKey(lesson, trackId = getActiveTrackId()) {
+  return makeLessonKey(trackId, lesson.id);
+}
+
+function getStoredLessonValue(store, lesson, trackId = getActiveTrackId()) {
+  return store[getLessonKey(lesson, trackId)];
+}
+
+function setStoredLessonValue(store, lesson, value, trackId = getActiveTrackId()) {
+  store[getLessonKey(lesson, trackId)] = value;
+}
+
+function deleteStoredLessonValue(store, lesson, trackId = getActiveTrackId()) {
+  delete store[getLessonKey(lesson, trackId)];
+}
+
+function isLessonCompleted(lesson, trackId = getActiveTrackId()) {
+  return state.completed.has(getLessonKey(lesson, trackId));
+}
+
+function saveActiveLessonId() {
+  const activeLessonsByTrack = readJson(storageKeys.activeLessonByTrack, {});
+  activeLessonsByTrack[getActiveTrackId()] = state.activeLessonId;
+  writeJson(storageKeys.activeLessonByTrack, activeLessonsByTrack);
+  if (getActiveTrackId() === defaultTrackId) {
+    localStorage.setItem(storageKeys.activeLesson, String(state.activeLessonId));
+  }
 }
 
 function getStreak() {
   let streak = 0;
   const today = new Date();
-  const completionDates = new Set(Object.values(state.completedOn).length > 0
-    ? Object.values(state.completedOn)
-    : [...state.completedDates]);
+  const activePrefix = `${getActiveTrackId()}:`;
+  const trackDates = Object.entries(state.completedOn)
+    .filter(([key]) => key.startsWith(activePrefix))
+    .map(([, date]) => date);
+  const completionDates = new Set(trackDates.length > 0 ? trackDates : [...state.completedDates]);
   for (let offset = 0; offset < 365; offset += 1) {
     const check = new Date(today);
     check.setDate(today.getDate() - offset);
@@ -166,8 +273,9 @@ function syncCompletedDates() {
 }
 
 function renderStats() {
-  const completed = state.completed.size;
-  const percent = Math.round((completed / lessons.length) * 100);
+  const activeLessons = getActiveLessons();
+  const completed = activeLessons.filter((lesson) => isLessonCompleted(lesson)).length;
+  const percent = Math.round((completed / activeLessons.length) * 100);
   elements.completedCount.textContent = String(completed);
   elements.streakCount.textContent = String(getStreak());
   elements.progressPercent.textContent = `${percent}%`;
@@ -183,10 +291,10 @@ function countNoteSentences(text) {
 }
 
 function getCompletionState(lesson) {
-  const quiz = quizzes[lesson.id];
-  const quizCorrect = Number(state.quizAnswers[lesson.id]) === quiz.answer;
-  const studyRead = Boolean(state.studyRead[lesson.id]);
-  const noteReady = countNoteSentences(state.notes[lesson.id] || "") >= 2;
+  const quiz = getActiveQuizzes()[lesson.id];
+  const quizCorrect = Number(getStoredLessonValue(state.quizAnswers, lesson)) === quiz.answer;
+  const studyRead = Boolean(getStoredLessonValue(state.studyRead, lesson));
+  const noteReady = countNoteSentences(getStoredLessonValue(state.notes, lesson) || "") >= 2;
   const readyCount = [studyRead, quizCorrect, noteReady].filter(Boolean).length;
   return {
     quizCorrect,
@@ -198,6 +306,48 @@ function getCompletionState(lesson) {
 }
 
 function getLabForLesson(lesson) {
+  if (getActiveTrackId() === "data-lake") {
+    if (lesson.id <= 7) {
+      return {
+        title: "Sketch a data lake pipeline",
+        steps: [
+          "Choose one small dataset, such as event logs.",
+          "Write the raw file format and folder path.",
+          "Write one query the future analyst needs."
+        ]
+      };
+    }
+    return {
+      title: "Design a tiny data experiment",
+      steps: [
+        "Pick one variable: format, partition, or quality rule.",
+        "Pick one metric: query time, files scanned, or errors found.",
+        "Write what result would support your thesis."
+      ]
+    };
+  }
+
+  if (getActiveTrackId() === "blockchain-consensus") {
+    if (lesson.id <= 7) {
+      return {
+        title: "Trace a consensus decision",
+        steps: [
+          "Draw four nodes.",
+          "Choose one proposed block.",
+          "Mark which nodes agree, disagree, or fail."
+        ]
+      };
+    }
+    return {
+      title: "Plan a small consensus simulation",
+      steps: [
+        "Pick one variable: nodes, delay, difficulty, or faulty nodes.",
+        "Pick one metric: fork count, commit latency, or message count.",
+        "Write one assumption your simulation makes."
+      ]
+    };
+  }
+
   if (lesson.id <= 7) {
     return {
       title: "Trace the model input-output loop",
@@ -265,8 +415,10 @@ function renderLab(lesson) {
 }
 
 function getReviewLessons(activeLesson) {
+  const activePrefix = `${getActiveTrackId()}:`;
   return [...state.completed]
-    .map((id) => getLessonById(Number(id)))
+    .filter((key) => key.startsWith(activePrefix))
+    .map((key) => getLessonById(Number(key.split(":")[1])))
     .filter((lesson) => lesson.id !== activeLesson.id)
     .sort((a, b) => b.id - a.id)
     .slice(0, 3);
@@ -281,14 +433,14 @@ function renderReviewQueue(activeLesson) {
   }
 
   const correctCount = reviewLessons.filter((lesson) => {
-    const key = String(lesson.id);
-    return Number(state.reviewAnswers[key]) === quizzes[lesson.id].answer;
+    return Number(getStoredLessonValue(state.reviewAnswers, lesson)) === getActiveQuizzes()[lesson.id].answer;
   }).length;
 
   elements.reviewStatus.textContent = `${correctCount}/${reviewLessons.length} refreshed`;
   elements.reviewList.innerHTML = reviewLessons.map((lesson) => {
-    const quiz = quizzes[lesson.id];
-    const selected = state.reviewAnswers[lesson.id] !== undefined ? Number(state.reviewAnswers[lesson.id]) : null;
+    const quiz = getActiveQuizzes()[lesson.id];
+    const savedAnswer = getStoredLessonValue(state.reviewAnswers, lesson);
+    const selected = savedAnswer !== undefined ? Number(savedAnswer) : null;
     const correct = selected === quiz.answer;
     return `
       <article class="review-card">
@@ -306,7 +458,7 @@ function renderReviewQueue(activeLesson) {
 
 function renderChecklist(lesson) {
   const status = getCompletionState(lesson);
-  const done = state.completed.has(lesson.id);
+  const done = isLessonCompleted(lesson);
   elements.studyReadCheck.checked = status.studyRead;
   elements.quizCheckItem.classList.toggle("is-complete", status.quizCorrect);
   elements.noteCheckItem.classList.toggle("is-complete", status.noteReady);
@@ -319,7 +471,7 @@ function renderChecklist(lesson) {
 }
 
 function renderStudyMaterial(lesson) {
-  const study = studyMaterials[lesson.id] || {
+  const study = getActiveTrack().studyMaterials[lesson.id] || {
     text: [lesson.focus],
     terms: ["concept", "task", "metric"],
     cs: lesson.thesis
@@ -335,8 +487,8 @@ function renderStudyMaterial(lesson) {
 }
 
 function renderQuiz(lesson) {
-  const quiz = quizzes[lesson.id];
-  const savedAnswer = state.quizAnswers[lesson.id];
+  const quiz = getActiveQuizzes()[lesson.id];
+  const savedAnswer = getStoredLessonValue(state.quizAnswers, lesson);
   const hasAnswer = savedAnswer !== undefined;
   const selected = hasAnswer ? Number(savedAnswer) : null;
   const isCorrect = hasAnswer && selected === quiz.answer;
@@ -362,11 +514,14 @@ function renderQuiz(lesson) {
 function renderToday() {
   const todayLesson = getTodayLesson();
   const lesson = getLessonById(state.activeLessonId);
-  const done = state.completed.has(lesson.id);
+  const done = isLessonCompleted(lesson);
   const selectedIsToday = lesson.id === todayLesson.id;
+  const activeTrackMeta = categoryTracks.find((track) => track.id === getActiveTrackId());
 
   elements.todayTitle.textContent = selectedIsToday ? lesson.title : `Review: ${lesson.title}`;
-  elements.datePill.textContent = selectedIsToday ? `Day ${lesson.id}` : `Lesson ${lesson.id}`;
+  elements.datePill.textContent = selectedIsToday
+    ? `${activeTrackMeta.shortTitle} Day ${lesson.id}`
+    : `${activeTrackMeta.shortTitle} Lesson ${lesson.id}`;
   elements.lessonWeek.textContent = lesson.week;
   elements.lessonTitle.textContent = lesson.title;
   elements.lessonFocus.textContent = lesson.focus;
@@ -382,16 +537,16 @@ function renderToday() {
   elements.lessonStatus.classList.toggle("is-done", done);
   elements.completeButton.textContent = done ? "Done today" : "Mark done";
   elements.completeButton.classList.toggle("is-done", done);
-  elements.dailyNote.value = state.notes[lesson.id] || "";
+  elements.dailyNote.value = getStoredLessonValue(state.notes, lesson) || "";
   renderLab(lesson);
   renderQuiz(lesson);
   renderReviewQueue(lesson);
   renderChecklist(lesson);
-  localStorage.setItem(storageKeys.activeLesson, String(lesson.id));
+  saveActiveLessonId();
 }
 
 function renderRoadmap() {
-  const groups = lessons.reduce((acc, lesson) => {
+  const groups = getActiveLessons().reduce((acc, lesson) => {
     acc[lesson.week] = acc[lesson.week] || [];
     acc[lesson.week].push(lesson);
     return acc;
@@ -401,7 +556,7 @@ function renderRoadmap() {
     <section class="week-group" aria-label="${week}">
       <h3 class="week-title">${week}</h3>
       ${weekLessons.map((lesson) => {
-        const done = state.completed.has(lesson.id);
+        const done = isLessonCompleted(lesson);
         return `
           <article class="lesson-card ${done ? "is-done" : ""}" data-lesson-id="${lesson.id}" tabindex="0" role="button" aria-label="Open lesson ${lesson.id}: ${lesson.title}">
             <span class="day-number">${lesson.id}</span>
@@ -417,9 +572,20 @@ function renderRoadmap() {
   `).join("");
 }
 
+function renderTrackSelect() {
+  elements.trackSelect.innerHTML = categoryTracks.map((track) => `
+    <option value="${escapeHtml(track.id)}" ${track.id === getActiveTrackId() ? "selected" : ""}>${escapeHtml(track.title)}</option>
+  `).join("");
+}
+
 function renderCategories() {
-  elements.categoryList.innerHTML = categoryTracks.map((track) => `
-    <article class="category-card">
+  elements.categoryList.innerHTML = categoryTracks.map((track) => {
+    const trackLessons = getTrackLessons(track.id);
+    const completed = trackLessons.filter((lesson) => isLessonCompleted(lesson, track.id)).length;
+    const percent = Math.round((completed / trackLessons.length) * 100);
+    const selected = track.id === getActiveTrackId();
+    return `
+    <article class="category-card ${selected ? "is-selected" : ""}">
       <div class="category-header">
         <div>
           <p class="eyebrow">${escapeHtml(track.shortTitle)}</p>
@@ -434,28 +600,24 @@ function renderCategories() {
         ${track.concepts.map((concept) => `<span>${escapeHtml(concept)}</span>`).join("")}
       </div>
 
-      <div class="category-grid">
-        <section>
-          <h4>10-minute learning path</h4>
-          <ol>
-            ${track.path.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
-          </ol>
-        </section>
-        <section>
-          <h4>Easy thesis ideas</h4>
-          <ul>
-            ${track.thesisIdeas.map((idea) => `<li>${escapeHtml(idea)}</li>`).join("")}
-          </ul>
-        </section>
+      <div class="category-progress">
+        <div>
+          <strong>${completed}/${trackLessons.length}</strong>
+          <span>lessons done</span>
+        </div>
+        <div class="mini-track" aria-hidden="true">
+          <div class="mini-bar" style="width: ${percent}%"></div>
+        </div>
       </div>
 
-      <div class="source-row">
-        ${track.sources.map((source) => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.label)}</a>`).join("")}
-      </div>
+      <p class="category-summary"><strong>Today's first lesson:</strong> ${escapeHtml(getTodayLesson(track.id).title)}</p>
 
-      <button class="secondary-button category-action" type="button" data-view-target="${escapeHtml(track.actionView)}">${escapeHtml(track.actionLabel)}</button>
+      <button class="${selected ? "primary-button" : "secondary-button"} category-action" type="button" data-track-id="${escapeHtml(track.id)}">
+        ${selected ? "Selected category" : `Start ${escapeHtml(track.shortTitle)}`}
+      </button>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderThemes() {
@@ -491,8 +653,8 @@ function renderLibrary() {
 }
 
 function renderNotes() {
-  const noteEntries = lessons
-    .map((lesson) => ({ lesson, text: state.notes[lesson.id] }))
+  const noteEntries = getActiveLessons()
+    .map((lesson) => ({ lesson, text: getStoredLessonValue(state.notes, lesson) }))
     .filter((entry) => entry.text && entry.text.trim().length > 0);
 
   if (noteEntries.length === 0) {
@@ -531,6 +693,12 @@ function renderBuilderFields() {
 
 function getThemeRecommendation() {
   const text = Object.values(state.builder).join(" ").toLowerCase();
+  if (getActiveTrackId() === "data-lake") {
+    return "Try a Data Lake partition strategy comparison. It is systems-focused, measurable, and possible with a small CSV or Parquet dataset.";
+  }
+  if (getActiveTrackId() === "blockchain-consensus") {
+    return "Try a small consensus simulation. Compare message count, commit latency, or fork frequency while changing node count or delay.";
+  }
   if (text.includes("code") || text.includes("program")) {
     return "Start with code explanation or unit-test generation. It is CS-focused, easy to evaluate, and you can use small code snippets.";
   }
@@ -543,9 +711,19 @@ function getThemeRecommendation() {
   return "Try RAG chunk size comparison. It is algorithm-wise, practical, and easy to evaluate with recall@k and answer correctness.";
 }
 
+function getReadinessGroups() {
+  if (getActiveTrackId() === defaultTrackId) return readinessGroups;
+  const groups = getActiveLessons().reduce((acc, lesson) => {
+    acc[lesson.week] = acc[lesson.week] || [];
+    acc[lesson.week].push(lesson.id);
+    return acc;
+  }, {});
+  return Object.entries(groups).map(([name, ids]) => ({ name, ids }));
+}
+
 function renderReadiness() {
-  const groupScores = readinessGroups.map((group) => {
-    const done = group.ids.filter((id) => state.completed.has(id)).length;
+  const groupScores = getReadinessGroups().map((group) => {
+    const done = group.ids.filter((id) => isLessonCompleted(getLessonById(id))).length;
     return {
       name: group.name,
       percent: Math.round((done / group.ids.length) * 100),
@@ -582,7 +760,7 @@ function renderBuilder() {
 }
 
 function exportProposal() {
-  const title = state.builder.title || "Untitled LLM Thesis Proposal";
+  const title = state.builder.title || "Untitled CS Thesis Proposal";
   const content = `# ${title}
 
 ## Research Question
@@ -607,7 +785,7 @@ ${state.builder.limitations || ""}
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "llm-thesis-proposal.md";
+  link.download = "cs-thesis-proposal.md";
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -622,6 +800,7 @@ function escapeHtml(value) {
 }
 
 function renderAll() {
+  renderTrackSelect();
   renderStats();
   renderToday();
   renderRoadmap();
@@ -641,32 +820,47 @@ function setView(viewName) {
   });
 }
 
+function setActiveTrack(trackId) {
+  if (!tracks[trackId]) return;
+  state.activeTrack = trackId;
+  localStorage.setItem(storageKeys.activeTrack, trackId);
+  state.activeLessonId = getInitialLessonId(trackId);
+  saveActiveLessonId();
+  renderAll();
+  setView("today");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 document.querySelector(".tabs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-view]");
   if (!button) return;
   setView(button.dataset.view);
 });
 
+elements.trackSelect.addEventListener("change", () => {
+  setActiveTrack(elements.trackSelect.value);
+});
+
 elements.categoryList.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-view-target]");
+  const button = event.target.closest("[data-track-id]");
   if (!button) return;
-  setView(button.dataset.viewTarget);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  setActiveTrack(button.dataset.trackId);
 });
 
 elements.completeButton.addEventListener("click", () => {
   const lesson = getLessonById(state.activeLessonId);
-  if (state.completed.has(lesson.id)) {
-    state.completed.delete(lesson.id);
-    delete state.completedOn[lesson.id];
+  const lessonKey = getLessonKey(lesson);
+  if (isLessonCompleted(lesson)) {
+    state.completed.delete(lessonKey);
+    delete state.completedOn[lessonKey];
   } else {
     const completion = getCompletionState(lesson);
     if (!completion.isReady) {
       renderChecklist(lesson);
       return;
     }
-    state.completed.add(lesson.id);
-    state.completedOn[lesson.id] = localDateKey();
+    state.completed.add(lessonKey);
+    state.completedOn[lessonKey] = localDateKey();
   }
   writeJson(storageKeys.completed, [...state.completed]);
   syncCompletedDates();
@@ -685,14 +879,14 @@ elements.quizChoices.addEventListener("click", (event) => {
   const button = event.target.closest("[data-choice-index]");
   if (!button) return;
   const lesson = getLessonById(state.activeLessonId);
-  state.quizAnswers[lesson.id] = Number(button.dataset.choiceIndex);
+  setStoredLessonValue(state.quizAnswers, lesson, Number(button.dataset.choiceIndex));
   writeJson(storageKeys.quizAnswers, state.quizAnswers);
   renderToday();
 });
 
 elements.studyReadCheck.addEventListener("change", () => {
   const lesson = getLessonById(state.activeLessonId);
-  state.studyRead[lesson.id] = elements.studyReadCheck.checked;
+  setStoredLessonValue(state.studyRead, lesson, elements.studyReadCheck.checked);
   writeJson(storageKeys.studyRead, state.studyRead);
   renderChecklist(lesson);
 });
@@ -700,11 +894,11 @@ elements.studyReadCheck.addEventListener("change", () => {
 elements.reviewList.addEventListener("change", (event) => {
   const select = event.target.closest("[data-review-lesson]");
   if (!select) return;
-  const lessonId = select.dataset.reviewLesson;
+  const lesson = getLessonById(Number(select.dataset.reviewLesson));
   if (select.value === "") {
-    delete state.reviewAnswers[lessonId];
+    deleteStoredLessonValue(state.reviewAnswers, lesson);
   } else {
-    state.reviewAnswers[lessonId] = Number(select.value);
+    setStoredLessonValue(state.reviewAnswers, lesson, Number(select.value));
   }
   writeJson(storageKeys.reviewAnswers, state.reviewAnswers);
   renderReviewQueue(getLessonById(state.activeLessonId));
@@ -712,7 +906,7 @@ elements.reviewList.addEventListener("change", (event) => {
 
 elements.dailyNote.addEventListener("input", () => {
   const lesson = getLessonById(state.activeLessonId);
-  state.notes[lesson.id] = elements.dailyNote.value;
+  setStoredLessonValue(state.notes, lesson, elements.dailyNote.value);
   writeJson(storageKeys.notes, state.notes);
   elements.saveStatus.textContent = "Saved.";
   window.clearTimeout(window.noteSaveTimer);
@@ -727,6 +921,7 @@ elements.roadmapList.addEventListener("click", (event) => {
   const card = event.target.closest("[data-lesson-id]");
   if (!card) return;
   state.activeLessonId = Number(card.dataset.lessonId);
+  saveActiveLessonId();
   renderToday();
   setView("today");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -751,15 +946,15 @@ document.querySelector(".filter-row").addEventListener("click", (event) => {
 });
 
 elements.exportButton.addEventListener("click", () => {
-  const notes = lessons
-    .filter((lesson) => state.notes[lesson.id])
-    .map((lesson) => `Day ${lesson.id}: ${lesson.title}\n${state.notes[lesson.id]}`)
+  const notes = getActiveLessons()
+    .filter((lesson) => getStoredLessonValue(state.notes, lesson))
+    .map((lesson) => `Day ${lesson.id}: ${lesson.title}\n${getStoredLessonValue(state.notes, lesson)}`)
     .join("\n\n---\n\n");
   const blob = new Blob([notes || "No notes yet."], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "llm-thesis-notes.txt";
+  link.download = `${getActiveTrackId()}-thesis-notes.txt`;
   link.click();
   URL.revokeObjectURL(url);
 });
@@ -797,8 +992,10 @@ elements.resetButton.addEventListener("click", () => {
   state.reviewAnswers = {};
   state.studyRead = {};
   state.builder = {};
+  state.activeTrack = defaultTrackId;
   state.resetArmed = false;
-  state.activeLessonId = getTodayLesson().id;
+  localStorage.setItem(storageKeys.activeTrack, defaultTrackId);
+  state.activeLessonId = getTodayLesson(defaultTrackId).id;
   elements.resetButton.textContent = "Reset tracker";
   renderAll();
 });
@@ -811,6 +1008,8 @@ if (window.location.hash === "#categories") {
   setView("builder");
 } else if (window.location.hash === "#notes") {
   setView("notes");
+} else if (!hasStoredTrackChoice) {
+  setView("categories");
 }
 
 renderAll();
