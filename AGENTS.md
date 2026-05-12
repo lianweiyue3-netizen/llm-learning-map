@@ -51,6 +51,7 @@ assets/
 Defines the page structure:
 - Sidebar summary and roadmap image.
 - Top navigation tabs.
+- Categories-first default view.
 - Today lesson view.
 - Roadmap tab.
 - Categories tab.
@@ -349,6 +350,7 @@ http://127.0.0.1:5173/
 ```
 
 Manual checks:
+- App opens to Categories by default.
 - Today tab loads.
 - Study material appears.
 - Mini CS lab appears.

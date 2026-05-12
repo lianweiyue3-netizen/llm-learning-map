@@ -1022,7 +1022,7 @@ if (window.location.hash === "#categories") {
   setView("builder");
 } else if (window.location.hash === "#notes") {
   setView("notes");
-} else if (!hasStoredTrackChoice) {
+} else {
   setView("categories");
 }
 

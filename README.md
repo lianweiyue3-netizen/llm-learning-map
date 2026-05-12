@@ -2,7 +2,7 @@
 
 LLM、Data Lake、Blockchain Consensus を、卒業論文・小さな研究レポートのテーマ候補として学ぶための静的 Web アプリです。
 
-最初に学びたいカテゴリを選ぶと、Today、Roadmap、Study material、Mini quiz、Mini CS lab、Notes、進捗がそのカテゴリ用に切り替わります。難易度と範囲に合わせて、LLM は 42 日、Data Lake は 28 日、Blockchain Consensus は 35 日にしています。
+アプリを開くと最初にカテゴリ選択ページが表示されます。学びたいカテゴリを選ぶと、Today、Roadmap、Study material、Mini quiz、Mini CS lab、Notes、進捗がそのカテゴリ用に切り替わります。難易度と範囲に合わせて、LLM は 42 日、Data Lake は 28 日、Blockchain Consensus は 35 日にしています。
 
 ## 目的
 

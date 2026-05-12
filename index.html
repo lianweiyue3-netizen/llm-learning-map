@@ -57,16 +57,16 @@
         </header>
 
         <nav class="tabs" aria-label="Tracker sections">
-          <button class="tab-button is-active" type="button" data-view="today">Today</button>
+          <button class="tab-button is-active" type="button" data-view="categories">Categories</button>
+          <button class="tab-button" type="button" data-view="today">Today</button>
           <button class="tab-button" type="button" data-view="roadmap">Roadmap</button>
-          <button class="tab-button" type="button" data-view="categories">Categories</button>
           <button class="tab-button" type="button" data-view="themes">Thesis テーマ</button>
           <button class="tab-button" type="button" data-view="library">Library</button>
           <button class="tab-button" type="button" data-view="builder">Builder</button>
           <button class="tab-button" type="button" data-view="notes">Notes</button>
         </nav>
 
-        <section id="todayView" class="view is-active" aria-labelledby="todayTitle">
+        <section id="todayView" class="view" aria-labelledby="todayTitle">
           <div class="today-layout">
             <article class="lesson-panel">
               <div class="panel-heading">
@@ -187,7 +187,7 @@
           <div id="roadmapList" class="roadmap-list"></div>
         </section>
 
-        <section id="categoriesView" class="view" aria-labelledby="categoriesHeading">
+        <section id="categoriesView" class="view is-active" aria-labelledby="categoriesHeading">
           <div class="section-heading">
             <p class="eyebrow">Choose first</p>
             <h2 id="categoriesHeading">Learning categories</h2>
