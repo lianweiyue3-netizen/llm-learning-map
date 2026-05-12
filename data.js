@@ -2669,21 +2669,148 @@ Object.assign(blockchainConsensusQuizzes, {
   35: { question: "What belongs in a consensus proposal?", choices: ["Protocol, assumptions, variables, metrics, and limitations.", "Only a coin name.", "Only a diagram."], answer: 0, explanation: "A testable proposal needs method and measurement." }
 });
 
+const dataLakeLibrary = [
+  {
+    title: "Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores",
+    type: "Core paper",
+    source: "VLDB, 2020",
+    use: "Foundation for lakehouse table design: transaction log, ACID behavior, metadata, and cloud object storage tradeoffs.",
+    url: "https://www.vldb.org/pvldb/vol13/p3411-armbrust.pdf"
+  },
+  {
+    title: "Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics",
+    type: "Core paper",
+    source: "CIDR, 2021",
+    use: "Good background source for explaining why lakehouse systems combine data lake flexibility with warehouse-style management.",
+    url: "https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf"
+  },
+  {
+    title: "Apache Iceberg Documentation",
+    type: "Official docs",
+    source: "Apache Iceberg",
+    use: "Best practical source for schema evolution, partitioning, snapshots, catalogs, and table format behavior.",
+    url: "https://iceberg.apache.org/docs/latest/"
+  },
+  {
+    title: "Delta Lake Documentation",
+    type: "Official docs",
+    source: "Delta Lake",
+    use: "Use for ACID tables, constraints, optimization, transaction logs, and time travel concepts.",
+    url: "https://docs.delta.io/latest/index.html"
+  },
+  {
+    title: "Apache Parquet Documentation",
+    type: "Official docs",
+    source: "Apache Parquet",
+    use: "Foundation for columnar storage, file layout, and query efficiency in analytical data lakes.",
+    url: "https://parquet.apache.org/docs/"
+  },
+  {
+    title: "The Hadoop Distributed File System",
+    type: "Core paper",
+    source: "MSST, 2010",
+    use: "Background for distributed file storage, large files, metadata, replication, and early big-data storage design.",
+    url: "https://storageconference.us/2010/Papers/MSST/Shvachko.pdf"
+  },
+  {
+    title: "Apache Iceberg Performance",
+    type: "Official docs",
+    source: "Apache Iceberg",
+    use: "Useful for beginner thesis ideas about pruning, metadata statistics, file planning, and query performance.",
+    url: "https://iceberg.apache.org/docs/latest/performance/"
+  },
+  {
+    title: "Delta Lake Optimizations",
+    type: "Official docs",
+    source: "Delta Lake",
+    use: "Use for compaction, file layout, and optimization topics such as the small files problem.",
+    url: "https://docs.delta.io/latest/optimizations-oss.html"
+  }
+];
+
+const blockchainConsensusLibrary = [
+  {
+    title: "Bitcoin: A Peer-to-Peer Electronic Cash System",
+    type: "Core paper",
+    source: "Satoshi Nakamoto, 2008",
+    use: "Foundation for Proof of Work, blocks, longest-chain consensus, confirmations, and fork reasoning.",
+    url: "https://bitcoin.org/bitcoin.pdf"
+  },
+  {
+    title: "Practical Byzantine Fault Tolerance",
+    type: "Core paper",
+    source: "OSDI, 1999",
+    use: "Core BFT reference for quorums, phases, replicas, faulty nodes, and message-complexity discussion.",
+    url: "https://pmg.csail.mit.edu/papers/osdi99.pdf"
+  },
+  {
+    title: "The Latest Gossip on BFT Consensus",
+    type: "Core paper",
+    source: "arXiv, 2018",
+    use: "Tendermint-oriented source for BFT consensus, voting rounds, finality, and blockchain consensus assumptions.",
+    url: "https://arxiv.org/abs/1807.04938"
+  },
+  {
+    title: "Ethereum Proof-of-Stake Documentation",
+    type: "Official docs",
+    source: "Ethereum",
+    use: "Beginner source for validators, stake, finality, incentives, and PoS concepts.",
+    url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
+  },
+  {
+    title: "Ethereum Proof-of-Work Documentation",
+    type: "Official docs",
+    source: "Ethereum",
+    use: "Useful comparison source for PoW mining, difficulty, energy cost, and mechanism tradeoffs.",
+    url: "https://ethereum.org/en/developers/docs/consensus-mechanisms/pow/"
+  },
+  {
+    title: "Tendermint Consensus Documentation",
+    type: "Official docs",
+    source: "CometBFT",
+    use: "Practical explanation of Tendermint-style proposal, prevote, precommit, rounds, and validator behavior.",
+    url: "https://docs.cometbft.com/main/spec/consensus/"
+  },
+  {
+    title: "A Survey of Blockchain Consensus Algorithms Performance Evaluation Criteria",
+    type: "Survey paper",
+    source: "arXiv, 2021",
+    use: "Good survey-style map for metrics such as throughput, latency, scalability, and fault tolerance.",
+    url: "https://arxiv.org/abs/2109.03935"
+  },
+  {
+    title: "SoK: Consensus in the Age of Blockchains",
+    type: "Survey paper",
+    source: "ACM CCS, 2020",
+    use: "Use as a higher-level map of blockchain consensus design choices and terminology.",
+    url: "https://arxiv.org/abs/1711.03936"
+  }
+];
+
 const tracks = {
   llm: {
     lessons,
     studyMaterials,
-    quizzes
+    quizzes,
+    library,
+    libraryTitle: "LLM thesis library",
+    libraryIntro: "Already-written theses and core algorithm papers for RAG, model comparison, prompting, code generation, and fine-tuning."
   },
   "data-lake": {
     lessons: dataLakeLessons,
     studyMaterials: dataLakeStudyMaterials,
-    quizzes: dataLakeQuizzes
+    quizzes: dataLakeQuizzes,
+    library: dataLakeLibrary,
+    libraryTitle: "Data Lake thesis library",
+    libraryIntro: "Core papers and official sources for lakehouse design, Parquet, partitioning, metadata, compaction, query performance, and data quality."
   },
   "blockchain-consensus": {
     lessons: blockchainConsensusLessons,
     studyMaterials: blockchainConsensusStudyMaterials,
-    quizzes: blockchainConsensusQuizzes
+    quizzes: blockchainConsensusQuizzes,
+    library: blockchainConsensusLibrary,
+    libraryTitle: "Blockchain Consensus thesis library",
+    libraryIntro: "Core consensus papers and official sources for PoW, PoS, BFT, finality, validator behavior, simulations, and distributed-systems tradeoffs."
   }
 };
 

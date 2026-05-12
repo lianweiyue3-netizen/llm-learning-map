@@ -130,6 +130,7 @@ Category track focus:
 - LLM: tokenization, transformers, prompting, RAG, evaluation.
 - Data Lake: object storage, Parquet, partitioning, metadata, lakehouse table formats.
 - Blockchain Consensus: blocks, forks, finality, PoW, PoS, BFT, safety and liveness.
+- Each track also owns its own `library`, `libraryTitle`, and `libraryIntro`.
 
 ### `app.js`
 
@@ -181,6 +182,7 @@ Selecting a category changes:
 - Completion progress.
 - Review queue.
 - Readiness score.
+- Library sources.
 
 ### Completion Rules
 
@@ -352,6 +354,7 @@ Manual checks:
 - Mini CS lab appears.
 - Quiz appears.
 - Category selector switches Today/Roadmap/study material/quiz between LLM, Data Lake, and Blockchain Consensus.
+- Library tab changes sources when the selected category changes.
 - Daily checklist appears.
 - Builder tab opens.
 - Readiness score renders.

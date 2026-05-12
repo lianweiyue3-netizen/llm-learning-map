@@ -125,6 +125,8 @@ const elements = {
   roadmapList: document.querySelector("#roadmapList"),
   categoryList: document.querySelector("#categoryList"),
   themeList: document.querySelector("#themeList"),
+  libraryHeading: document.querySelector("#libraryHeading"),
+  libraryIntro: document.querySelector("#libraryIntro"),
   libraryList: document.querySelector("#libraryList"),
   notesList: document.querySelector("#notesList"),
   resetButton: document.querySelector("#resetButton"),
@@ -213,6 +215,10 @@ function getActiveLessons() {
 
 function getActiveQuizzes() {
   return getActiveTrack().quizzes;
+}
+
+function getActiveLibrary() {
+  return getActiveTrack().library || library;
 }
 
 function getLessonKey(lesson, trackId = getActiveTrackId()) {
@@ -639,15 +645,18 @@ function renderThemes() {
 }
 
 function renderLibrary() {
-  elements.libraryList.innerHTML = library.map((item) => `
+  const activeTrack = getActiveTrack();
+  elements.libraryHeading.textContent = activeTrack.libraryTitle || "CS thesis library";
+  elements.libraryIntro.textContent = activeTrack.libraryIntro || "Foundation sources for the selected thesis category.";
+  elements.libraryList.innerHTML = getActiveLibrary().map((item) => `
     <article class="library-card">
       <div class="library-meta">
-        <span class="tag">${item.type}</span>
-        <span class="tag">${item.source}</span>
+        <span class="tag">${escapeHtml(item.type)}</span>
+        <span class="tag">${escapeHtml(item.source)}</span>
       </div>
-      <h3>${item.title}</h3>
-      <p>${item.use}</p>
-      <a href="${item.url}" target="_blank" rel="noreferrer">Open source</a>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.use)}</p>
+      <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">Open source</a>
     </article>
   `).join("");
 }
@@ -820,14 +829,19 @@ function setView(viewName) {
   });
 }
 
-function setActiveTrack(trackId) {
+function getCurrentViewName() {
+  const activeView = document.querySelector(".view.is-active");
+  return activeView ? activeView.id.replace(/View$/, "") : "today";
+}
+
+function setActiveTrack(trackId, targetView = "today") {
   if (!tracks[trackId]) return;
   state.activeTrack = trackId;
   localStorage.setItem(storageKeys.activeTrack, trackId);
   state.activeLessonId = getInitialLessonId(trackId);
   saveActiveLessonId();
   renderAll();
-  setView("today");
+  setView(targetView);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -838,13 +852,13 @@ document.querySelector(".tabs").addEventListener("click", (event) => {
 });
 
 elements.trackSelect.addEventListener("change", () => {
-  setActiveTrack(elements.trackSelect.value);
+  setActiveTrack(elements.trackSelect.value, getCurrentViewName());
 });
 
 elements.categoryList.addEventListener("click", (event) => {
   const button = event.target.closest("[data-track-id]");
   if (!button) return;
-  setActiveTrack(button.dataset.trackId);
+  setActiveTrack(button.dataset.trackId, "today");
 });
 
 elements.completeButton.addEventListener("click", () => {
