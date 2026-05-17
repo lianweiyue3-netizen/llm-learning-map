@@ -16,8 +16,19 @@
 };
 
 const defaultTrackId = "llm";
+const urlParams = new URLSearchParams(window.location.search);
+
+function getUrlTrackId() {
+  const trackId = urlParams.get("track");
+  return tracks[trackId] ? trackId : "";
+}
 
 function getStoredTrackId() {
+  const urlTrackId = getUrlTrackId();
+  if (urlTrackId) {
+    localStorage.setItem(storageKeys.activeTrack, urlTrackId);
+    return urlTrackId;
+  }
   const stored = localStorage.getItem(storageKeys.activeTrack);
   return tracks[stored] ? stored : defaultTrackId;
 }
@@ -1082,7 +1093,12 @@ elements.resetButton.addEventListener("click", () => {
   renderAll();
 });
 
-if (window.location.hash === "#categories") {
+const validViews = ["categories", "today", "roadmap", "themes", "library", "builder", "notes"];
+const requestedView = urlParams.get("view");
+
+if (validViews.includes(requestedView)) {
+  setView(requestedView);
+} else if (window.location.hash === "#categories") {
   setView("categories");
 } else if (window.location.hash === "#library") {
   setView("library");
