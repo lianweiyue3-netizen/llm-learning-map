@@ -500,6 +500,42 @@ const categoryTracks = [
     actionView: "today"
   },
   {
+    id: "data-ingestion",
+    title: "Data Ingestion",
+    shortTitle: "Ingestion",
+    level: "35 days | coding-focused",
+    summary: "Study how data enters a system from files, APIs, databases, and event streams. This track is coding-focused and research-oriented: parsing, validation, idempotency, schema drift, orchestration, streaming, profiling, and discovery.",
+    concepts: ["ETL", "ELT", "schema drift", "idempotency", "CDC", "streaming", "profiling"],
+    path: [
+      "Start with files, records, schemas, and simple Python ingestion.",
+      "Build small batch pipelines with validation, logging, retries, and deduplication.",
+      "Learn API, database, scheduling, and CDC ingestion patterns.",
+      "Study streaming concepts such as offsets, delivery guarantees, late data, and dead-letter queues.",
+      "Connect ingestion to research ideas from data discovery: profiles, signatures, similarity, sampling, and incremental maintenance."
+    ],
+    thesisIdeas: [
+      "Compare full reload, incremental timestamp-based ingestion, and CDC-style ingestion on correctness and runtime.",
+      "Build a small ingestion profiler that detects schema drift, duplicates, missing values, and candidate join keys.",
+      "Evaluate sampling-based change detection for deciding when an ingested dataset needs re-profiling."
+    ],
+    sources: [
+      {
+        label: "Apache Airflow ETL/ELT",
+        url: "https://airflow.apache.org/use-cases/etl_analytics/"
+      },
+      {
+        label: "Apache Beam Programming Guide",
+        url: "https://beam.apache.org/documentation/programming-guide/"
+      },
+      {
+        label: "Aurum data discovery",
+        url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18"
+      }
+    ],
+    actionLabel: "Open Thesis Builder",
+    actionView: "builder"
+  },
+  {
     id: "data-lake",
     title: "Data Lake",
     shortTitle: "Data Lake",
@@ -1827,6 +1863,34 @@ const themes = [
     level: "easy",
     question: "For a narrow classification task, which is more reliable: a small trained classifier or an LLM prompt?",
     method: "Use a public dataset, compare accuracy/F1, runtime, and error examples."
+  },
+  {
+    title: "Schema drift detection for CSV ingestion",
+    tags: ["beginner", "ingestion", "evaluation"],
+    level: "easy",
+    question: "Can a small validation script detect useful schema changes before bad data enters a pipeline?",
+    method: "Create several CSV versions with missing columns, added columns, and type changes, then measure detection precision and false alarms."
+  },
+  {
+    title: "Full reload vs incremental ingestion",
+    tags: ["beginner", "ingestion", "systems", "evaluation"],
+    level: "easy",
+    question: "When is incremental ingestion faster than full reload, and what correctness risks does it introduce?",
+    method: "Build two Python ingestion scripts over timestamped records, compare runtime, missing-record rate, duplicate rate, and recovery after failure."
+  },
+  {
+    title: "Ingestion-time profiling for data discovery",
+    tags: ["ingestion", "systems", "evaluation"],
+    level: "medium",
+    question: "Does producing column profiles during ingestion make it easier to find related datasets later?",
+    method: "During ingestion, store schema, null rate, unique count, and sample values, then use simple similarity scoring to find candidate joins."
+  },
+  {
+    title: "Sampling-based re-profiling after data changes",
+    tags: ["ingestion", "systems", "evaluation"],
+    level: "medium",
+    question: "Can sampling decide when a dataset needs full re-profiling without rereading everything?",
+    method: "Simulate changed columns, compare old/new samples, and measure whether a threshold correctly triggers profile recomputation."
   }
 ];
 
@@ -2669,6 +2733,605 @@ Object.assign(blockchainConsensusQuizzes, {
   35: { question: "What belongs in a consensus proposal?", choices: ["Protocol, assumptions, variables, metrics, and limitations.", "Only a coin name.", "Only a diagram."], answer: 0, explanation: "A testable proposal needs method and measurement." }
 });
 
+const dataIngestionLessons = [
+  {
+    id: 1,
+    week: "Week 1: Ingestion from zero",
+    title: "What data ingestion means",
+    focus: "Data ingestion is the process of bringing data from sources such as files, APIs, databases, and event streams into a target system where it can be stored, checked, and used.",
+    learn: "Learn source, pipeline, destination, and record.",
+    practice: "Write a tiny Python script that reads three hard-coded records and prints them.",
+    thesis: "Write one research question about reliable data arrival.",
+    resource: "pandas IO tools",
+    url: "https://pandas.pydata.org/docs/user_guide/io.html",
+    study: ["Data ingestion starts before analytics. The first problem is getting data into a controlled place without losing records, duplicating records, or breaking the expected shape.", "From a coding view, ingestion is a program that reads from a source, parses records, validates them, and writes them somewhere else."],
+    terms: ["source", "record", "destination", "pipeline"],
+    cs: "Think of ingestion as input handling plus reliability guarantees.",
+    quiz: { question: "What is data ingestion?", choices: ["Moving data from sources into a controlled target system.", "Only drawing charts.", "Only training an AI model."], answer: 0, explanation: "Ingestion is the entry stage of a data pipeline." }
+  },
+  {
+    id: 2,
+    week: "Week 1: Ingestion from zero",
+    title: "Records and schemas",
+    focus: "A record is one unit of data. A schema describes fields, types, and expectations. Ingestion code often fails when the schema changes unexpectedly.",
+    learn: "Learn fields, types, required values, and optional values.",
+    practice: "Create a list of dictionaries with id, name, timestamp, and amount.",
+    thesis: "Write how schema errors could affect downstream analysis.",
+    resource: "Great Expectations validation",
+    url: "https://docs.greatexpectations.io/docs/guides/validation/validate_data_overview/",
+    study: ["A schema is a contract between the source and the pipeline. If a field disappears or changes type, the pipeline may load wrong data or crash.", "For beginner coding, represent records as Python dictionaries and schemas as simple validation checks."],
+    terms: ["record", "schema", "field", "type"],
+    cs: "Schema checking is defensive programming for data pipelines.",
+    quiz: { question: "Why does schema matter in ingestion?", choices: ["It defines the expected fields and types.", "It makes the UI blue.", "It deletes duplicates automatically."], answer: 0, explanation: "Schema helps ingestion code parse and validate records." }
+  },
+  {
+    id: 3,
+    week: "Week 1: Ingestion from zero",
+    title: "CSV ingestion",
+    focus: "CSV is a common first ingestion format. It is simple, but real CSV files can have missing values, bad delimiters, extra columns, and type problems.",
+    learn: "Read a CSV file with Python or pandas.",
+    practice: "Load a small CSV and count rows, columns, and missing values.",
+    thesis: "Write one failure mode of CSV ingestion.",
+    resource: "pandas read_csv",
+    url: "https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html",
+    study: ["CSV looks easy because it is text, but it has many edge cases. Ingestion code should check row count, expected columns, and parse errors.", "A research topic can compare how validation rules detect common CSV problems."],
+    terms: ["CSV", "delimiter", "missing value", "parse error"],
+    cs: "Parsing is the first correctness challenge in many data systems.",
+    quiz: { question: "Which is a common CSV ingestion problem?", choices: ["Missing values or unexpected columns.", "Consensus finality.", "Prompt temperature."], answer: 0, explanation: "CSV files often break assumptions about columns and values." }
+  },
+  {
+    id: 4,
+    week: "Week 1: Ingestion from zero",
+    title: "JSON ingestion",
+    focus: "JSON is common for APIs and logs. It supports nested data, which makes parsing more flexible but also more complex.",
+    learn: "Read a JSON file and flatten one nested field.",
+    practice: "Parse three JSON records and extract id and timestamp.",
+    thesis: "Write how nested data complicates ingestion.",
+    resource: "pandas read_json",
+    url: "https://pandas.pydata.org/docs/reference/api/pandas.read_json.html",
+    study: ["JSON records may not all have the same shape. One event may include a nested object while another omits it.", "Ingestion code must decide whether to flatten nested data, keep it raw, or reject records that do not match expectations."],
+    terms: ["JSON", "nested field", "flattening", "event"],
+    cs: "Nested structures make schema validation more complex than flat CSV tables.",
+    quiz: { question: "Why can JSON be harder than CSV?", choices: ["It can contain nested and inconsistent structures.", "It cannot store text.", "It only works with images."], answer: 0, explanation: "Nested and optional fields complicate parsing." }
+  },
+  {
+    id: 5,
+    week: "Week 1: Ingestion from zero",
+    title: "Data types and timestamps",
+    focus: "Ingestion code must convert strings into useful types such as integers, floats, booleans, and timestamps. Time zones and invalid dates are common problems.",
+    learn: "Parse a timestamp string into a datetime object.",
+    practice: "Write code that rejects rows with invalid dates.",
+    thesis: "Write why timestamp parsing affects data correctness.",
+    resource: "pandas time series",
+    url: "https://pandas.pydata.org/docs/user_guide/timeseries.html",
+    study: ["Many sources send everything as text. The ingestion layer turns text into typed data.", "Timestamps are especially important because late or misparsed time values can damage incremental ingestion and streaming analysis."],
+    terms: ["type conversion", "timestamp", "timezone", "invalid value"],
+    cs: "Type conversion turns raw bytes into structured program state.",
+    quiz: { question: "Why are timestamps important in ingestion?", choices: ["They are often used for ordering and incremental loads.", "They make files smaller automatically.", "They replace validation."], answer: 0, explanation: "Timestamps often drive pipeline logic." }
+  },
+  {
+    id: 6,
+    week: "Week 1: Ingestion from zero",
+    title: "Basic validation",
+    focus: "Validation checks whether data satisfies rules before it is accepted. Rules can check required fields, ranges, uniqueness, and allowed values.",
+    learn: "Learn not-null, range, and uniqueness checks.",
+    practice: "Write three if-statements that validate a record.",
+    thesis: "Write how validation reduces downstream debugging.",
+    resource: "Great Expectations validation",
+    url: "https://docs.greatexpectations.io/docs/guides/validation/validate_data_overview/",
+    study: ["Validation catches problems close to the source. This is cheaper than discovering bad data after dashboards, models, or reports have already used it.", "A beginner implementation can be simple Python rules before using larger validation frameworks."],
+    terms: ["validation", "not-null", "range check", "allowed values"],
+    cs: "Validation is a gatekeeping algorithm for incoming records.",
+    quiz: { question: "What does validation do?", choices: ["Checks whether incoming data satisfies rules.", "Only stores images.", "Makes all data private."], answer: 0, explanation: "Validation accepts, rejects, or flags records based on rules." }
+  },
+  {
+    id: 7,
+    week: "Week 1: Ingestion from zero",
+    title: "Weekly checkpoint",
+    focus: "You can now explain ingestion as reading records, parsing formats, checking schemas, converting types, and validating data before storage.",
+    learn: "Review days 1-6.",
+    practice: "Build a 20-line script that reads CSV and prints validation errors.",
+    thesis: "Pick one ingestion problem: parsing, schema, validation, or timestamps.",
+    resource: "pandas IO tools",
+    url: "https://pandas.pydata.org/docs/user_guide/io.html",
+    study: ["This week is enough to build the smallest ingestion program: read, parse, validate, and report errors.", "For research, the important move is turning a practical bug into a measurable question."],
+    terms: ["parser", "schema", "validation", "error report"],
+    cs: "A small script can become a research prototype if it measures a clear problem.",
+    quiz: { question: "Which sequence describes basic ingestion?", choices: ["Read, parse, validate, write.", "Train, hallucinate, deploy.", "Mine, fork, finalize."], answer: 0, explanation: "Basic ingestion moves data through controlled processing steps." }
+  },
+  {
+    id: 8,
+    week: "Week 2: Batch pipeline coding",
+    title: "Batch ingestion",
+    focus: "Batch ingestion processes data in chunks or scheduled runs. It is easier to start with than streaming because the input has a clear beginning and end.",
+    learn: "Learn batch job, input folder, output folder, and run ID.",
+    practice: "Write a script that processes every CSV file in a folder.",
+    thesis: "Write when batch ingestion is enough for a system.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["Batch ingestion is common for daily reports, nightly syncs, and historical backfills.", "The coding challenge is making the job repeatable: the same input should produce the same output without surprise side effects."],
+    terms: ["batch job", "run ID", "input folder", "output folder"],
+    cs: "Batch processing is easier to debug because each run can be inspected as a unit.",
+    quiz: { question: "What is batch ingestion?", choices: ["Processing data in scheduled chunks or bounded runs.", "Processing only one keyboard event.", "A blockchain voting round."], answer: 0, explanation: "Batch jobs process bounded sets of data." }
+  },
+  {
+    id: 9,
+    week: "Week 2: Batch pipeline coding",
+    title: "Idempotency",
+    focus: "An idempotent ingestion job can be run more than once without creating duplicate or inconsistent results. This is essential for retries.",
+    learn: "Learn why retry-safe jobs matter.",
+    practice: "Run the same ingestion script twice and prevent duplicate output rows.",
+    thesis: "Write a research question about idempotent pipeline design.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["Pipelines fail because networks, files, and APIs fail. Retrying is normal, so duplicate prevention is not optional.", "A simple idempotency strategy is to write output by run date, replace a partition, or deduplicate by a stable key."],
+    terms: ["idempotency", "retry", "duplicate", "stable key"],
+    cs: "Idempotency is a correctness property for repeated program execution.",
+    quiz: { question: "What does idempotent ingestion prevent?", choices: ["Duplicate or inconsistent results after reruns.", "All network traffic.", "All schema changes."], answer: 0, explanation: "Idempotent jobs are safe to retry." }
+  },
+  {
+    id: 10,
+    week: "Week 2: Batch pipeline coding",
+    title: "Deduplication",
+    focus: "Deduplication removes repeated records. The hard part is deciding what counts as the same record.",
+    learn: "Learn exact duplicates vs key-based duplicates.",
+    practice: "Drop duplicate rows by id and timestamp.",
+    thesis: "Write how deduplication rules can change analytical results.",
+    resource: "pandas duplicated",
+    url: "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.duplicated.html",
+    study: ["Duplicate records may come from retries, source bugs, or multiple files containing overlapping data.", "Deduplication is not only a coding task; it is a semantics question about record identity."],
+    terms: ["deduplication", "primary key", "event ID", "record identity"],
+    cs: "Deduplication is set logic applied to messy real data.",
+    quiz: { question: "What is the hardest part of deduplication?", choices: ["Defining what counts as the same record.", "Choosing a button color.", "Making timestamps disappear."], answer: 0, explanation: "Record identity determines duplicate logic." }
+  },
+  {
+    id: 11,
+    week: "Week 2: Batch pipeline coding",
+    title: "Incremental ingestion",
+    focus: "Incremental ingestion loads only new or changed data since the last successful run. It is faster than full reloads but needs state tracking.",
+    learn: "Learn watermark, last loaded timestamp, and checkpoint.",
+    practice: "Save the latest timestamp to a small checkpoint file.",
+    thesis: "Compare full reload and incremental ingestion.",
+    resource: "Apache Beam Programming Guide",
+    url: "https://beam.apache.org/documentation/programming-guide/",
+    study: ["Incremental ingestion avoids reading everything every time. It depends on knowing what has already been processed.", "A checkpoint may be a timestamp, file name, offset, or version number."],
+    terms: ["incremental load", "watermark", "checkpoint", "state"],
+    cs: "Incremental ingestion is stateful computation over changing input.",
+    quiz: { question: "What does incremental ingestion load?", choices: ["Only new or changed data since the last successful run.", "Only deleted files.", "Only data without timestamps."], answer: 0, explanation: "Incremental jobs track what was already processed." }
+  },
+  {
+    id: 12,
+    week: "Week 2: Batch pipeline coding",
+    title: "Error handling",
+    focus: "Ingestion code should decide what to do with bad records: reject them, quarantine them, fix them, or load them with warnings.",
+    learn: "Learn fail-fast vs partial load.",
+    practice: "Write bad rows into an errors.csv file.",
+    thesis: "Write a question about error handling strategy and data completeness.",
+    resource: "Great Expectations validation",
+    url: "https://docs.greatexpectations.io/docs/guides/validation/validate_data_overview/",
+    study: ["A pipeline that crashes on one bad row may be too fragile. A pipeline that ignores bad rows may hide data quality problems.", "Good ingestion systems record error details so humans can inspect and fix sources."],
+    terms: ["fail-fast", "quarantine", "partial load", "error log"],
+    cs: "Error handling is a policy decision encoded in code.",
+    quiz: { question: "What is a quarantine file for?", choices: ["Saving rejected records for inspection.", "Storing UI images.", "Increasing model size."], answer: 0, explanation: "Quarantined records are not silently lost." }
+  },
+  {
+    id: 13,
+    week: "Week 2: Batch pipeline coding",
+    title: "Logging and observability",
+    focus: "A pipeline should record what happened: files read, rows accepted, rows rejected, runtime, and errors. Without logs, debugging ingestion is guesswork.",
+    learn: "Learn basic structured logging fields.",
+    practice: "Print a run summary with row counts and error counts.",
+    thesis: "Write how observability affects pipeline maintainability.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["Ingestion is operational code. It needs evidence of what happened during each run.", "Useful logs include input names, output names, counts, validation failures, runtime, and checkpoint values."],
+    terms: ["logging", "metrics", "row count", "runtime"],
+    cs: "Observability turns pipeline behavior into data for debugging.",
+    quiz: { question: "Which belongs in an ingestion run summary?", choices: ["Rows read, rows accepted, rows rejected, and runtime.", "Only font size.", "Only thesis title."], answer: 0, explanation: "Run summaries make pipeline behavior visible." }
+  },
+  {
+    id: 14,
+    week: "Week 2: Batch pipeline coding",
+    title: "Batch checkpoint",
+    focus: "You can now build a basic reliable batch ingestion script: read files, validate records, deduplicate, track state, handle errors, and log results.",
+    learn: "Review days 8-13.",
+    practice: "Build a folder-to-clean-CSV ingestion script.",
+    thesis: "Pick one batch reliability metric.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["A strong beginner project can be a small ingestion framework with validation and logging.", "For research, compare strategies: full reload vs incremental load, strict validation vs quarantine, or no dedup vs key-based dedup."],
+    terms: ["batch pipeline", "reliability", "metric", "strategy"],
+    cs: "A research prototype should make a pipeline behavior measurable.",
+    quiz: { question: "Which metric fits batch ingestion reliability?", choices: ["Duplicate rate or rejected-row count.", "Screen brightness.", "Number of CSS classes."], answer: 0, explanation: "Reliability metrics should describe data correctness or pipeline behavior." }
+  },
+  {
+    id: 15,
+    week: "Week 3: Sources and orchestration",
+    title: "API ingestion",
+    focus: "APIs often return paginated JSON and enforce rate limits. Ingestion code must handle pages, errors, retries, and changing response shapes.",
+    learn: "Learn pagination and rate limits.",
+    practice: "Write pseudocode for fetching pages until no next page remains.",
+    thesis: "Write how API limits affect ingestion completeness.",
+    resource: "Apache Beam Programming Guide",
+    url: "https://beam.apache.org/documentation/programming-guide/",
+    study: ["API ingestion is more dynamic than file ingestion because the source can return errors, timeouts, or different payload shapes.", "A good API pipeline saves progress after each page so it can recover after failure."],
+    terms: ["API", "pagination", "rate limit", "retry"],
+    cs: "API ingestion is network programming plus state management.",
+    quiz: { question: "Why does API pagination matter?", choices: ["The pipeline may need multiple requests to retrieve all records.", "It changes image size.", "It removes validation."], answer: 0, explanation: "Paginated APIs split results across pages." }
+  },
+  {
+    id: 16,
+    week: "Week 3: Sources and orchestration",
+    title: "Database ingestion",
+    focus: "Database ingestion reads tables or query results from an operational database. The pipeline must avoid overloading the source and should track what changed.",
+    learn: "Learn table, query, source load, and extract.",
+    practice: "Write SQL that selects rows updated after a timestamp.",
+    thesis: "Write one risk of reading from production databases.",
+    resource: "Debezium documentation",
+    url: "https://debezium.io/documentation/reference/stable/index.html",
+    study: ["Operational databases are designed for applications, not heavy analytical extraction. Ingestion must be careful about load and consistency.", "Incremental queries often use updated_at timestamps, but timestamps can be missing, wrong, or not monotonic."],
+    terms: ["database extract", "updated_at", "source load", "consistency"],
+    cs: "Database ingestion needs query design and operational safety.",
+    quiz: { question: "Why be careful when ingesting from production databases?", choices: ["Extraction can overload or disturb the source system.", "It changes HTML layout.", "It prevents all duplicates automatically."], answer: 0, explanation: "Source impact is a real ingestion constraint." }
+  },
+  {
+    id: 17,
+    week: "Week 3: Sources and orchestration",
+    title: "Change data capture",
+    focus: "Change data capture captures inserts, updates, and deletes from a database log or change stream. CDC is useful when polling is too slow or unreliable.",
+    learn: "Learn insert, update, delete, and change event.",
+    practice: "Write example events for insert, update, and delete.",
+    thesis: "Compare polling and CDC conceptually.",
+    resource: "Debezium tutorial",
+    url: "https://debezium.io/documentation/reference/stable/tutorial.html",
+    study: ["CDC treats database changes as events. Instead of repeatedly asking what changed, the pipeline reads a change stream.", "CDC introduces ordering, replay, delete handling, and schema evolution questions."],
+    terms: ["CDC", "change event", "insert", "delete"],
+    cs: "CDC turns database mutation history into an event stream.",
+    quiz: { question: "What does CDC capture?", choices: ["Database inserts, updates, and deletes as changes.", "Only chart colors.", "Only final thesis text."], answer: 0, explanation: "CDC reads changes rather than full tables." }
+  },
+  {
+    id: 18,
+    week: "Week 3: Sources and orchestration",
+    title: "Scheduling",
+    focus: "Scheduling decides when ingestion runs. A schedule can be time-based, event-based, or manually triggered.",
+    learn: "Learn cron, DAG, dependency, and backfill.",
+    practice: "Write a daily schedule and a dependency between extract and validate.",
+    thesis: "Write how scheduling affects data freshness.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["A scheduled ingestion job must know when to run, what depends on what, and how to recover missed runs.", "Airflow represents workflows as DAGs, which are graphs of tasks and dependencies."],
+    terms: ["schedule", "DAG", "dependency", "backfill"],
+    cs: "Orchestration is graph execution for data workflows.",
+    quiz: { question: "What is a DAG used for in orchestration?", choices: ["Representing task dependencies.", "Encrypting all data.", "Replacing schemas."], answer: 0, explanation: "A DAG models which tasks run before others." }
+  },
+  {
+    id: 19,
+    week: "Week 3: Sources and orchestration",
+    title: "Backfill",
+    focus: "Backfill reruns ingestion for past time periods. It is common when code changes, data is late, or a pipeline was broken.",
+    learn: "Learn historical run and partition replacement.",
+    practice: "Plan how to reload the last seven days safely.",
+    thesis: "Write how backfill can create duplicates if not designed carefully.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["Backfill is necessary in real systems because pipelines are not perfect. But rerunning old periods can duplicate data if outputs are append-only.", "A safer design replaces a time partition or deduplicates by stable keys."],
+    terms: ["backfill", "historical run", "partition replacement", "append-only"],
+    cs: "Backfill tests whether an ingestion design is truly repeatable.",
+    quiz: { question: "What is backfill?", choices: ["Rerunning ingestion for past time periods.", "Deleting all old logs.", "Making a diagram darker."], answer: 0, explanation: "Backfill repairs or rebuilds historical data." }
+  },
+  {
+    id: 20,
+    week: "Week 3: Sources and orchestration",
+    title: "Metadata and lineage",
+    focus: "Metadata describes datasets, runs, schemas, and owners. Lineage records where data came from and how it was transformed.",
+    learn: "Learn dataset metadata and run metadata.",
+    practice: "Create a JSON metadata file for one ingestion run.",
+    thesis: "Connect ingestion metadata to the discovery problem in the PDF.",
+    resource: "Aurum data discovery",
+    url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18",
+    study: ["The Aurum paper frames discovery as finding relevant data across many sources. Ingestion can help discovery by producing profiles, schemas, and lineage as data arrives.", "A research direction is to make ingestion produce metadata that supports later search and joining."],
+    terms: ["metadata", "lineage", "profile", "data discovery"],
+    cs: "Metadata is a second data product produced by the ingestion pipeline.",
+    quiz: { question: "How can ingestion help data discovery?", choices: ["By producing metadata, profiles, and lineage.", "By hiding schemas.", "By avoiding all logs."], answer: 0, explanation: "Discovery depends on searchable information about data." }
+  },
+  {
+    id: 21,
+    week: "Week 3: Sources and orchestration",
+    title: "Orchestration checkpoint",
+    focus: "You can now explain ingestion from files, APIs, databases, CDC, schedules, backfills, and metadata.",
+    learn: "Review days 15-20.",
+    practice: "Draw an ingestion DAG with extract, validate, load, and profile tasks.",
+    thesis: "Pick one orchestration or metadata problem.",
+    resource: "Apache Airflow ETL/ELT",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/",
+    study: ["This week connects coding to system design. Real ingestion systems are not just scripts; they are scheduled, monitored, and connected to metadata.", "A practical thesis can evaluate whether metadata generated during ingestion improves discovery or debugging."],
+    terms: ["orchestration", "DAG", "metadata", "debugging"],
+    cs: "Pipelines become systems when runs, dependencies, and metadata are explicit.",
+    quiz: { question: "What makes a script become an ingestion system?", choices: ["Scheduling, monitoring, state, and metadata.", "Only changing the file name.", "Only adding a logo."], answer: 0, explanation: "Operational features turn scripts into systems." }
+  },
+  {
+    id: 22,
+    week: "Week 4: Streaming ingestion",
+    title: "Streaming basics",
+    focus: "Streaming ingestion processes records continuously as they arrive. It is useful for logs, clicks, transactions, and sensor events.",
+    learn: "Learn stream, event, producer, and consumer.",
+    practice: "Write a loop that processes events one at a time from a list.",
+    thesis: "Write when streaming is necessary and when batch is enough.",
+    resource: "Apache Kafka design",
+    url: "https://kafka.apache.org/42/design/design/",
+    study: ["Streaming removes the clear boundary of a batch. The pipeline keeps running and must handle ordering, late records, and failures.", "For beginners, model a stream as a sequence of events processed one by one."],
+    terms: ["stream", "event", "producer", "consumer"],
+    cs: "Streaming ingestion is continuous input processing.",
+    quiz: { question: "What is streaming ingestion?", choices: ["Continuously processing records as they arrive.", "Only loading one yearly CSV.", "Only writing static HTML."], answer: 0, explanation: "Streaming pipelines handle ongoing event flow." }
+  },
+  {
+    id: 23,
+    week: "Week 4: Streaming ingestion",
+    title: "Offsets",
+    focus: "An offset records how far a consumer has read in a stream. Offsets are checkpoints for streaming ingestion.",
+    learn: "Learn offset, commit, replay, and consumer position.",
+    practice: "Simulate a list of events and store the last processed index.",
+    thesis: "Write how offset handling affects duplicates and data loss.",
+    resource: "Apache Kafka design",
+    url: "https://kafka.apache.org/42/design/design/",
+    study: ["Offsets let a consumer resume after failure. If an offset is committed too early, data can be lost. If committed too late, data can be processed twice.", "This tradeoff is central to delivery guarantees."],
+    terms: ["offset", "commit", "replay", "consumer"],
+    cs: "Offsets are persistent state for stream processing.",
+    quiz: { question: "What does an offset track?", choices: ["How far a consumer has read in a stream.", "The color of an event.", "The number of pages in a thesis."], answer: 0, explanation: "Offsets are stream checkpoints." }
+  },
+  {
+    id: 24,
+    week: "Week 4: Streaming ingestion",
+    title: "Delivery guarantees",
+    focus: "Delivery guarantees describe whether records may be lost, duplicated, or processed exactly once under failure.",
+    learn: "Learn at-most-once, at-least-once, and exactly-once processing.",
+    practice: "Classify failure examples as data loss or duplicate risk.",
+    thesis: "Write why exactly-once is difficult in real ingestion.",
+    resource: "Apache Kafka design",
+    url: "https://kafka.apache.org/42/design/design/",
+    study: ["At-most-once risks loss. At-least-once risks duplicates. Exactly-once processing needs coordination between reads, processing, writes, and state.", "Many practical systems combine at-least-once delivery with idempotent writes and deduplication."],
+    terms: ["at-most-once", "at-least-once", "exactly-once", "duplicate"],
+    cs: "Delivery guarantees are correctness contracts under failure.",
+    quiz: { question: "What does at-least-once risk?", choices: ["Duplicate processing.", "Never receiving any records by design.", "No need for state."], answer: 0, explanation: "At-least-once retries can process a record more than once." }
+  },
+  {
+    id: 25,
+    week: "Week 4: Streaming ingestion",
+    title: "Dead-letter queues",
+    focus: "A dead-letter queue stores records that could not be processed successfully. It prevents one bad record from blocking the whole stream.",
+    learn: "Learn poison record and DLQ.",
+    practice: "Route invalid events into a separate bad_events list.",
+    thesis: "Write a question about DLQ policy and data completeness.",
+    resource: "Apache Beam Programming Guide",
+    url: "https://beam.apache.org/documentation/programming-guide/",
+    study: ["A poison record repeatedly fails processing. Without a policy, it can block progress.", "A DLQ preserves bad records for later inspection while allowing the main pipeline to continue."],
+    terms: ["dead-letter queue", "poison record", "quarantine", "retry"],
+    cs: "DLQs are error isolation for streaming systems.",
+    quiz: { question: "Why use a dead-letter queue?", choices: ["To isolate records that fail processing.", "To make data disappear silently.", "To create a blockchain fork."], answer: 0, explanation: "DLQs preserve failures without blocking the pipeline." }
+  },
+  {
+    id: 26,
+    week: "Week 4: Streaming ingestion",
+    title: "Late and out-of-order data",
+    focus: "Streaming data may arrive late or out of order. Pipelines need event time, processing time, and policies for late records.",
+    learn: "Learn event time and processing time.",
+    practice: "Sort events by event_time and compare with arrival order.",
+    thesis: "Write how late data affects correctness.",
+    resource: "Apache Beam Programming Guide",
+    url: "https://beam.apache.org/documentation/programming-guide/",
+    study: ["Arrival order is not always event order. A click can happen at 10:00 but arrive at 10:05.", "Streaming systems must decide how long to wait for late records and whether to revise previous outputs."],
+    terms: ["event time", "processing time", "late data", "out-of-order"],
+    cs: "Time semantics are part of streaming correctness.",
+    quiz: { question: "What is event time?", choices: ["When the event actually happened.", "When CSS loaded.", "When the user opened README."], answer: 0, explanation: "Event time belongs to the data record itself." }
+  },
+  {
+    id: 27,
+    week: "Week 4: Streaming ingestion",
+    title: "Throughput and latency",
+    focus: "Throughput is records per time unit. Latency is how long a record takes to be ingested and processed. Streaming systems balance both.",
+    learn: "Learn throughput, latency, and backpressure.",
+    practice: "Measure how long a Python loop takes to process 10,000 events.",
+    thesis: "Write a metric pair for streaming ingestion performance.",
+    resource: "Apache Kafka design",
+    url: "https://kafka.apache.org/42/design/design/",
+    study: ["A pipeline can process many records per second but still have high latency if records wait in queues.", "Backpressure happens when downstream processing cannot keep up with incoming data."],
+    terms: ["throughput", "latency", "backpressure", "queue"],
+    cs: "Performance evaluation needs both rate and delay metrics.",
+    quiz: { question: "What does latency measure?", choices: ["How long a record takes to move through the pipeline.", "How many columns exist.", "How many categories are selected."], answer: 0, explanation: "Latency is delay per record or batch." }
+  },
+  {
+    id: 28,
+    week: "Week 4: Streaming ingestion",
+    title: "Streaming checkpoint",
+    focus: "You can now discuss streaming ingestion using events, offsets, delivery guarantees, DLQs, time semantics, throughput, and latency.",
+    learn: "Review days 22-27.",
+    practice: "Design a mini stream processor with offsets and a DLQ.",
+    thesis: "Pick one streaming ingestion tradeoff.",
+    resource: "Apache Kafka design",
+    url: "https://kafka.apache.org/42/design/design/",
+    study: ["Streaming ingestion is harder than batch because the input never really ends.", "A manageable thesis should simulate or prototype one aspect, such as offset commit timing, DLQ policy, or late-data handling."],
+    terms: ["offset", "DLQ", "latency", "delivery guarantee"],
+    cs: "A small stream simulator can expose reliability tradeoffs clearly.",
+    quiz: { question: "Which is a manageable streaming thesis variable?", choices: ["Offset commit timing or DLQ policy.", "Every Kafka feature at once.", "Only app background color."], answer: 0, explanation: "One variable keeps the study realistic." }
+  },
+  {
+    id: 29,
+    week: "Week 5: Research from ingestion",
+    title: "Data profiling",
+    focus: "Data profiling computes summaries such as column names, types, unique counts, null rates, value ranges, and samples. The PDF uses profiles as building blocks for discovery.",
+    learn: "Learn column profile and unique count.",
+    practice: "Compute null rate and unique count for each CSV column.",
+    thesis: "Write how ingestion-time profiling could help data discovery.",
+    resource: "Aurum data discovery",
+    url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18",
+    study: ["The Aurum paper builds profiles before relationships. This is useful for your direction because ingestion is the perfect time to create profiles while data is already being read.", "A coding project can build a lightweight profiler that stores schema, counts, examples, and quality metrics."],
+    terms: ["profile", "unique count", "null rate", "sample"],
+    cs: "Profiling summarizes data so later algorithms do not need to reread everything.",
+    quiz: { question: "Why profile data during ingestion?", choices: ["The pipeline is already reading the data.", "It makes validation impossible.", "It replaces all storage."], answer: 0, explanation: "Ingestion-time profiling reuses the read pass." }
+  },
+  {
+    id: 30,
+    week: "Week 5: Research from ingestion",
+    title: "Schema drift detection",
+    focus: "Schema drift happens when incoming data changes shape over time. Detecting drift early prevents silent breakage.",
+    learn: "Learn added column, missing column, and type change.",
+    practice: "Compare today's schema with yesterday's schema.",
+    thesis: "Write a schema drift detection experiment.",
+    resource: "Great Expectations validation",
+    url: "https://docs.greatexpectations.io/docs/guides/validation/validate_data_overview/",
+    study: ["Schema drift is a natural research topic because it is common, measurable, and coding-friendly.", "You can test how different drift rules detect changes while avoiding false alarms."],
+    terms: ["schema drift", "type change", "false alarm", "compatibility"],
+    cs: "Schema drift detection is change detection over structured metadata.",
+    quiz: { question: "What is schema drift?", choices: ["A change in incoming data structure over time.", "A graph path query.", "A consensus timeout."], answer: 0, explanation: "Drift means the expected schema has changed." }
+  },
+  {
+    id: 31,
+    week: "Week 5: Research from ingestion",
+    title: "Column similarity",
+    focus: "The PDF discusses schema and content similarity between columns. In ingestion research, similarity can help detect copied tables, related sources, or join candidates.",
+    learn: "Learn name similarity and value overlap.",
+    practice: "Compare two columns using set overlap of values.",
+    thesis: "Write a topic about finding related ingested datasets.",
+    resource: "Aurum data discovery",
+    url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18",
+    study: ["Aurum uses relationships between columns to help users find related data. For a small thesis, you can implement simple name similarity and Jaccard overlap.", "This connects ingestion to discovery: after data arrives, the system can suggest related datasets."],
+    terms: ["schema similarity", "content similarity", "Jaccard", "join candidate"],
+    cs: "Column similarity is a search/indexing problem over profiles.",
+    quiz: { question: "What can column similarity help find?", choices: ["Related datasets or candidate joins.", "Only UI buttons.", "Only crypto validators."], answer: 0, explanation: "Similarity relationships support discovery." }
+  },
+  {
+    id: 32,
+    week: "Week 5: Research from ingestion",
+    title: "Signatures and sketches",
+    focus: "A signature or sketch summarizes data compactly. The PDF uses signatures to avoid expensive all-pairs comparisons and repeated full reads.",
+    learn: "Learn approximate summary and MinHash intuition.",
+    practice: "Store a small set of sample values as a column signature.",
+    thesis: "Write how signatures reduce ingestion metadata cost.",
+    resource: "Aurum data discovery",
+    url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18",
+    study: ["A sketch is a compact summary that helps estimate properties without storing every value.", "You do not need advanced math first: start by storing unique counts, value samples, and simple hashed samples."],
+    terms: ["signature", "sketch", "MinHash", "approximation"],
+    cs: "Sketches trade exactness for speed and memory efficiency.",
+    quiz: { question: "Why use signatures or sketches?", choices: ["To summarize data compactly for faster comparison.", "To make data unreadable forever.", "To remove all validation."], answer: 0, explanation: "Signatures make comparison cheaper." }
+  },
+  {
+    id: 33,
+    week: "Week 5: Research from ingestion",
+    title: "Sampling for change detection",
+    focus: "The PDF's RESS idea uses samples to detect whether a column changed enough to recompute its profile. This is a strong research direction for ingestion maintenance.",
+    learn: "Learn sample, threshold, and recompute decision.",
+    practice: "Sample 10 values and compare with an old sample.",
+    thesis: "Draft a sampling-based re-profiling question.",
+    resource: "Aurum data discovery",
+    url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18",
+    study: ["Re-reading all data after every change can be expensive. Sampling asks a smaller question: did the data change enough to justify recomputing metadata?", "A beginner thesis can simulate old and new columns and measure how well sampling detects meaningful change."],
+    terms: ["sampling", "threshold", "recompute", "change detection"],
+    cs: "Sampling-based maintenance is a cost-accuracy tradeoff.",
+    quiz: { question: "What is the goal of sampling-based change detection?", choices: ["Decide whether full re-profiling is needed without rereading everything.", "Avoid all metadata.", "Guarantee no data ever changes."], answer: 0, explanation: "Sampling can reduce maintenance cost." }
+  },
+  {
+    id: 34,
+    week: "Week 5: Research from ingestion",
+    title: "Evaluation design",
+    focus: "A data ingestion thesis needs clear metrics: correctness, duplicate rate, rejected-row rate, runtime, latency, profile freshness, detection precision, or recall.",
+    learn: "Choose one correctness metric and one cost metric.",
+    practice: "Create a table with method, dataset, metric, and expected result.",
+    thesis: "Write your experiment design in one paragraph.",
+    resource: "Apache Beam Programming Guide",
+    url: "https://beam.apache.org/documentation/programming-guide/",
+    study: ["Good ingestion research is measurable. Do not only say a pipeline is better; define what better means.", "For PDF-inspired work, metrics could include discovery quality, profile update cost, or change-detection accuracy."],
+    terms: ["metric", "precision", "recall", "runtime"],
+    cs: "Research quality depends on matching metrics to claims.",
+    quiz: { question: "Which metric fits ingestion correctness?", choices: ["Duplicate rate or missing-record rate.", "Image corner radius.", "Number of tabs only."], answer: 0, explanation: "Correctness metrics describe data quality and completeness." }
+  },
+  {
+    id: 35,
+    week: "Week 5: Research from ingestion",
+    title: "Data Ingestion proposal",
+    focus: "You now have enough for a coding-wise research proposal: source type, ingestion strategy, reliability problem, prototype, metrics, and limitations.",
+    learn: "Review days 29-34.",
+    practice: "Fill the Builder tab with a Data Ingestion thesis idea.",
+    thesis: "Draft your Data Ingestion thesis proposal in 6-8 sentences.",
+    resource: "Builder tab",
+    url: "#builder",
+    study: ["A strong Data Ingestion thesis can be small: one source type, one reliability issue, one prototype, and measurable results.", "Good beginner directions include schema drift detection, idempotent incremental loads, DLQ policy, ingestion-time profiling, or sampling-based profile maintenance."],
+    terms: ["proposal", "prototype", "metric", "limitation"],
+    cs: "The best thesis shape is a small system plus a clear evaluation.",
+    quiz: { question: "What belongs in a Data Ingestion proposal?", choices: ["Source, strategy, reliability problem, prototype, metrics, and limitations.", "Only a broad title.", "Only a screenshot."], answer: 0, explanation: "A proposal must describe the system and how it will be evaluated." }
+  }
+];
+
+const dataIngestionStudyMaterials = Object.fromEntries(
+  dataIngestionLessons.map((lesson) => [lesson.id, {
+    text: lesson.study,
+    terms: lesson.terms,
+    cs: lesson.cs
+  }])
+);
+
+const dataIngestionQuizzes = Object.fromEntries(
+  dataIngestionLessons.map((lesson) => [lesson.id, lesson.quiz])
+);
+
+const dataIngestionLibrary = [
+  {
+    title: "Aurum: A Data Discovery System",
+    type: "Core paper",
+    source: "ICDE, 2018",
+    use: "The user's PDF direction: profiles, signatures, relationship discovery, approximate matching, and efficient maintenance of searchable enterprise data.",
+    url: "https://dblp.org/rec/conf/icde/FernandezAKYMS18"
+  },
+  {
+    title: "Apache Airflow ETL/ELT Use Case",
+    type: "Official docs",
+    source: "Apache Airflow",
+    use: "Practical source for scheduled ingestion workflows, DAGs, dependencies, retries, backfills, and operational pipeline design.",
+    url: "https://airflow.apache.org/use-cases/etl_analytics/"
+  },
+  {
+    title: "Apache Beam Programming Guide",
+    type: "Official docs",
+    source: "Apache Beam",
+    use: "Use for batch and streaming concepts, transforms, windowing, state, timers, and portable data processing patterns.",
+    url: "https://beam.apache.org/documentation/programming-guide/"
+  },
+  {
+    title: "Apache Kafka Design",
+    type: "Official docs",
+    source: "Apache Kafka",
+    use: "Good foundation for streams, producers, consumers, offsets, logs, durability, and delivery tradeoffs.",
+    url: "https://kafka.apache.org/42/design/design/"
+  },
+  {
+    title: "Debezium Documentation",
+    type: "Official docs",
+    source: "Debezium",
+    use: "Reference for change data capture, database change events, connectors, schema change handling, and CDC terminology.",
+    url: "https://debezium.io/documentation/reference/stable/index.html"
+  },
+  {
+    title: "Great Expectations Validation",
+    type: "Official docs",
+    source: "Great Expectations",
+    use: "Practical source for validation, expectations, data quality checks, and writing testable ingestion rules.",
+    url: "https://docs.greatexpectations.io/docs/guides/validation/validate_data_overview/"
+  },
+  {
+    title: "pandas IO Tools",
+    type: "Official docs",
+    source: "pandas",
+    use: "Beginner coding source for reading CSV, JSON, Excel, SQL, and other common ingestion inputs.",
+    url: "https://pandas.pydata.org/docs/user_guide/io.html"
+  },
+  {
+    title: "Singer Spec",
+    type: "Open specification",
+    source: "Meltano Hub",
+    use: "Useful for understanding simple extract/load connector ideas: schemas, records, state messages, and incremental sync.",
+    url: "https://hub.meltano.com/singer/spec/"
+  }
+];
+
 const dataLakeLibrary = [
   {
     title: "Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores",
@@ -2803,6 +3466,14 @@ const tracks = {
     library: dataLakeLibrary,
     libraryTitle: "Data Lake thesis library",
     libraryIntro: "Core papers and official sources for lakehouse design, Parquet, partitioning, metadata, compaction, query performance, and data quality."
+  },
+  "data-ingestion": {
+    lessons: dataIngestionLessons,
+    studyMaterials: dataIngestionStudyMaterials,
+    quizzes: dataIngestionQuizzes,
+    library: dataIngestionLibrary,
+    libraryTitle: "Data Ingestion thesis library",
+    libraryIntro: "Coding and research sources for batch ingestion, streaming ingestion, CDC, validation, orchestration, profiling, data discovery, and incremental maintenance."
   },
   "blockchain-consensus": {
     lessons: blockchainConsensusLessons,

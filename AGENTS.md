@@ -2,11 +2,12 @@
 
 ## 1. Project Purpose / 项目目标
 
-This project is a local, free-to-use website for learning CS thesis foundations in about 10 minutes per day. It supports selectable learning tracks for Large Language Models, Data Lake, and Blockchain Consensus.
+This project is a local, free-to-use website for learning CS thesis foundations in about 10 minutes per day. It supports selectable learning tracks for Large Language Models, Data Ingestion, Data Lake, and Blockchain Consensus.
 
 Primary user goal:
 - Learn LLM basics gradually.
-- Compare LLM, Data Lake, and Blockchain Consensus as possible thesis directions.
+- Compare LLM, Data Ingestion, Data Lake, and Blockchain Consensus as possible thesis directions.
+- Learn data ingestion from scratch, including coding-wise pipeline basics and PDF-inspired data discovery ideas.
 - Prepare for an easy computer science thesis.
 - Find model-wise / algorithm-wise thesis topics.
 - Track daily learning, quiz progress, notes, and thesis proposal readiness.
@@ -41,6 +42,7 @@ styles.css
 data.js
 app.js
 assets/
+  cs-thesis-roadmap-ai-v3.png
   cs-thesis-roadmap-ai-v2.png
   cs-thesis-roadmap-ai.png
   llm-roadmap-ai-labeled.png
@@ -111,6 +113,9 @@ Main exported globals:
 - `dataLakeLessons`
 - `dataLakeStudyMaterials`
 - `dataLakeQuizzes`
+- `dataIngestionLessons`
+- `dataIngestionStudyMaterials`
+- `dataIngestionQuizzes`
 - `blockchainConsensusLessons`
 - `blockchainConsensusStudyMaterials`
 - `blockchainConsensusQuizzes`
@@ -121,6 +126,7 @@ Main exported globals:
 
 Current learning path:
 - LLM: 42 lessons over 6 weeks.
+- Data Ingestion: 35 lessons over 5 weeks.
 - Data Lake: 28 lessons over 4 weeks.
 - Blockchain Consensus: 35 lessons over 5 weeks.
 - 10-minute structure per lesson.
@@ -132,6 +138,7 @@ Theme focus:
 
 Category track focus:
 - LLM: tokenization, transformers, prompting, RAG, evaluation.
+- Data Ingestion: CSV/JSON ingestion, schema validation, idempotency, incremental loads, CDC, streaming, profiling, data discovery, and sampling-based maintenance.
 - Data Lake: object storage, Parquet, partitioning, metadata, lakehouse table formats.
 - Blockchain Consensus: blocks, forks, finality, PoW, PoS, BFT, safety and liveness.
 - Each track also owns its own `library`, `libraryTitle`, and `libraryIntro`.
@@ -171,8 +178,9 @@ Each lesson includes:
 
 ### Categories
 
-The Categories tab provides three selectable beginner-friendly thesis directions:
+The Categories tab provides four selectable beginner-friendly thesis directions:
 - Large Language Model.
+- Data Ingestion.
 - Data Lake.
 - Blockchain Consensus.
 
@@ -306,6 +314,9 @@ The note is considered ready if:
 ### Builder Recommendation
 
 The recommended thesis direction is chosen using simple keyword matching from builder fields:
+- selected Data Ingestion track -> ingestion pipeline plus profiler direction.
+- selected Data Lake track -> partition strategy comparison direction.
+- selected Blockchain Consensus track -> small consensus simulation direction.
 - `code` or `program` -> code explanation / unit test generation.
 - `lora`, `fine`, or `bert` -> model comparison / fine-tuning direction.
 - `japanese` or `token` -> tokenizer behavior.
@@ -313,22 +324,33 @@ The recommended thesis direction is chosen using simple keyword matching from bu
 
 This is intentionally simple and transparent.
 
+### User-provided PDF Context
+
+The user provided `C:/Users/lianw/Downloads/discovery-1.pdf`.
+
+Extracted foundation:
+- Title: `Aurum: A Data Discovery System`.
+- Core direction: data discovery through an Enterprise Knowledge Graph.
+- Useful Data Ingestion tie-in: ingestion can produce profiles, signatures, lineage, and relationship metadata while data is already being read.
+- PDF-inspired thesis ideas in the app include ingestion-time profiling, column similarity, signatures/sketches, and sampling-based re-profiling.
+
 ## 7. Assets / 图片资源
 
 Current active sidebar image:
 
 ```text
-assets/cs-thesis-roadmap-ai-v2.png
+assets/cs-thesis-roadmap-ai-v3.png
 ```
 
 Description:
 - AI-generated roadmap-style image.
-- Main CS thesis roadmap with a neutral CS Topics start branching equally into LLM, Data Lake, and Blockchain Consensus, then Quiz and Thesis.
+- Main CS thesis roadmap with a neutral CS Topics start branching equally into LLM, Data Ingestion, Data Lake, and Consensus, then Quiz and Thesis.
 
 Previous or unused assets:
 
 ```text
 assets/cs-thesis-roadmap-ai.png
+assets/cs-thesis-roadmap-ai-v2.png
 assets/llm-roadmap-ai-labeled.png
 assets/llm-roadmap-ai.png
 assets/llm-learning-ai.png
@@ -360,7 +382,7 @@ Manual checks:
 - Study material appears.
 - Mini CS lab appears.
 - Quiz appears.
-- Category selector switches Today/Roadmap/study material/quiz between LLM, Data Lake, and Blockchain Consensus.
+- Category selector switches Today/Roadmap/study material/quiz between LLM, Data Ingestion, Data Lake, and Blockchain Consensus.
 - Library tab changes sources when the selected category changes.
 - Daily checklist appears.
 - Builder tab opens.
@@ -442,7 +464,7 @@ Status:
 ```text
 Working local static website.
 Multi-track learning tracker complete.
-LLM, Data Lake, and Blockchain Consensus each have lessons, study material, quizzes, labs, notes, roadmap, and progress.
+LLM, Data Ingestion, Data Lake, and Blockchain Consensus each have lessons, study material, quizzes, labs, notes, roadmap, and progress.
 Thesis-prep features added.
 Ready for daily use.
 ```

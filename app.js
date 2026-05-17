@@ -312,6 +312,57 @@ function getCompletionState(lesson) {
 }
 
 function getLabForLesson(lesson) {
+  if (getActiveTrackId() === "data-ingestion") {
+    if (lesson.id <= 7) {
+      return {
+        title: "Write the smallest ingestion script",
+        steps: [
+          "Create three records as dictionaries or rows.",
+          "Check one required field and one data type.",
+          "Print accepted records and rejected records separately."
+        ]
+      };
+    }
+    if (lesson.id <= 14) {
+      return {
+        title: "Make a batch job repeatable",
+        steps: [
+          "Read two small CSV files from a folder.",
+          "Deduplicate by a stable key.",
+          "Write a run summary with rows read, accepted, rejected, and duplicates."
+        ]
+      };
+    }
+    if (lesson.id <= 21) {
+      return {
+        title: "Sketch an ingestion DAG",
+        steps: [
+          "Draw extract, validate, load, profile, and notify tasks.",
+          "Add one checkpoint or last-loaded timestamp.",
+          "Write what should happen if the source fails halfway."
+        ]
+      };
+    }
+    if (lesson.id <= 28) {
+      return {
+        title: "Simulate stream reliability",
+        steps: [
+          "Treat a list of events as a stream.",
+          "Store the last processed offset.",
+          "Route one invalid event into a dead-letter list."
+        ]
+      };
+    }
+    return {
+      title: "Turn ingestion into a research prototype",
+      steps: [
+        "Pick one problem: schema drift, duplicates, profiling, or sampling.",
+        "Pick one metric: missing records, duplicate rate, runtime, precision, or recall.",
+        "Write the baseline and the improved method you will compare."
+      ]
+    };
+  }
+
   if (getActiveTrackId() === "data-lake") {
     if (lesson.id <= 7) {
       return {
@@ -702,6 +753,9 @@ function renderBuilderFields() {
 
 function getThemeRecommendation() {
   const text = Object.values(state.builder).join(" ").toLowerCase();
+  if (getActiveTrackId() === "data-ingestion") {
+    return "Try a small ingestion pipeline plus profiler. Ingest CSV or API data, validate schema changes, detect duplicates or missing values, and measure correctness plus runtime.";
+  }
   if (getActiveTrackId() === "data-lake") {
     return "Try a Data Lake partition strategy comparison. It is systems-focused, measurable, and possible with a small CSV or Parquet dataset.";
   }
