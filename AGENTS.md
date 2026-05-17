@@ -456,6 +456,8 @@ When editing this project:
 - Do not remove user progress keys unless the user asks for reset/migration.
 - Do not overwrite generated image assets unless explicitly requested.
 - Use clear labels in UI. The user is learning from scratch.
+- User workflow preference: after each completed project change, stage only relevant files, create a clear commit, and push to `origin/main`.
+- Leave unrelated local or untracked files alone unless the user explicitly asks to include them.
 
 ## 12. Current Project Status
 
