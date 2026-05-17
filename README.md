@@ -15,6 +15,7 @@ LLM、Data Ingestion、Data Lake、Blockchain Consensus を、卒業論文・小
 
 - **Category selector**: LLM、Data Ingestion、Data Lake、Blockchain Consensus から学習カテゴリを選択
 - **Today**: 選択中カテゴリの今日のレッスン、Study material、Key terms、CS angle、Mini quiz、Mini CS lab
+- **Daily code task**: Data Ingestion では毎日 5 分で読める小さな Python コード練習を表示
 - **Roadmap**: 選択中カテゴリの学習ロードマップ
 - **Categories**: カテゴリ選択カードとカテゴリ別進捗
 - **Thesis テーマ**: 初心者向けの CS 論文テーマ案

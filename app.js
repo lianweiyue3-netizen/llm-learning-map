@@ -113,6 +113,10 @@ const elements = {
   labTime: document.querySelector("#labTime"),
   labTitle: document.querySelector("#labTitle"),
   labSteps: document.querySelector("#labSteps"),
+  codeTaskPanel: document.querySelector("#codeTaskPanel"),
+  codeTaskTitle: document.querySelector("#codeTaskTitle"),
+  codeTaskGoal: document.querySelector("#codeTaskGoal"),
+  codeTaskSnippet: document.querySelector("#codeTaskSnippet"),
   reviewStatus: document.querySelector("#reviewStatus"),
   reviewList: document.querySelector("#reviewList"),
   studyReadCheck: document.querySelector("#studyReadCheck"),
@@ -471,6 +475,15 @@ function renderLab(lesson) {
   elements.labSteps.innerHTML = lab.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
 }
 
+function renderCodeTask(lesson) {
+  const task = getActiveTrack().codeTasks?.[lesson.id];
+  elements.codeTaskPanel.hidden = !task;
+  if (!task) return;
+  elements.codeTaskTitle.textContent = task.title;
+  elements.codeTaskGoal.textContent = task.goal;
+  elements.codeTaskSnippet.textContent = task.code;
+}
+
 function getReviewLessons(activeLesson) {
   const activePrefix = `${getActiveTrackId()}:`;
   return [...state.completed]
@@ -596,6 +609,7 @@ function renderToday() {
   elements.completeButton.classList.toggle("is-done", done);
   elements.dailyNote.value = getStoredLessonValue(state.notes, lesson) || "";
   renderLab(lesson);
+  renderCodeTask(lesson);
   renderQuiz(lesson);
   renderReviewQueue(lesson);
   renderChecklist(lesson);

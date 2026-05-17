@@ -530,6 +530,7 @@ a {
 }
 
 .lab-panel,
+.code-task-panel,
 .review-panel,
 .checklist-panel {
   display: grid;
@@ -542,6 +543,7 @@ a {
 }
 
 .lab-heading,
+.code-task-heading,
 .review-heading,
 .checklist-heading {
   display: flex;
@@ -551,6 +553,7 @@ a {
 }
 
 .lab-heading span,
+.code-task-heading span,
 .review-heading span,
 .checklist-heading span {
   color: var(--teal-dark);
@@ -560,15 +563,43 @@ a {
 }
 
 .lab-heading strong,
+.code-task-heading strong,
 .review-heading strong,
 .checklist-heading strong {
   color: var(--muted);
   font-size: 0.9rem;
 }
 
-.lab-panel h4 {
+.lab-panel h4,
+.code-task-panel h4 {
   margin: 0;
   font-size: 1.02rem;
+}
+
+.code-task-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.code-task-panel pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid #cddce6;
+  border-radius: 8px;
+  background: #0f1f2e;
+  color: #eef7ff;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.code-task-panel code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.code-task-panel[hidden] {
+  display: none;
 }
 
 .lab-panel ol {

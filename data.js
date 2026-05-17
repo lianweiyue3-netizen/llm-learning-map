@@ -3273,6 +3273,513 @@ const dataIngestionQuizzes = Object.fromEntries(
   dataIngestionLessons.map((lesson) => [lesson.id, lesson.quiz])
 );
 
+const dataIngestionCodeTasks = {
+  1: {
+    title: "Create raw records",
+    goal: "Start with plain records before using any framework. Change one value and rerun it.",
+    code: `records = [
+    {"id": 1, "name": "Aki", "amount": 1200},
+    {"id": 2, "name": "Mei", "amount": 900},
+    {"id": 3, "name": "Ren", "amount": 0},
+]
+
+for row in records:
+    print(row["id"], row["name"], row["amount"])`
+  },
+  2: {
+    title: "Check a tiny schema",
+    goal: "Validate required fields and simple Python types.",
+    code: `schema = {"id": int, "name": str, "amount": int}
+row = {"id": 1, "name": "Aki", "amount": 1200}
+
+for field, expected_type in schema.items():
+    assert field in row, f"missing field: {field}"
+    assert isinstance(row[field], expected_type), f"bad type: {field}"
+
+print("row is valid")`
+  },
+  3: {
+    title: "Read CSV data",
+    goal: "Practice reading rows from CSV and counting missing values.",
+    code: `import csv
+from io import StringIO
+
+raw = """id,name,amount
+1,Aki,1200
+2,Mei,
+3,Ren,0
+"""
+
+rows = list(csv.DictReader(StringIO(raw)))
+missing_amount = [row for row in rows if row["amount"] == ""]
+print("rows:", len(rows))
+print("missing amount:", len(missing_amount))`
+  },
+  4: {
+    title: "Parse JSON records",
+    goal: "Extract useful fields from nested JSON-like records.",
+    code: `import json
+
+raw = '{"id": 1, "user": {"name": "Aki"}, "amount": 1200}'
+record = json.loads(raw)
+
+flat = {
+    "id": record["id"],
+    "name": record["user"]["name"],
+    "amount": record["amount"],
+}
+
+print(flat)`
+  },
+  5: {
+    title: "Parse timestamps",
+    goal: "Convert timestamp strings into real datetime values.",
+    code: `from datetime import datetime, timezone
+
+rows = [
+    {"id": 1, "created_at": "2026-05-17T10:30:00+00:00"},
+    {"id": 2, "created_at": "bad-date"},
+]
+
+for row in rows:
+    try:
+        row["created_at"] = datetime.fromisoformat(row["created_at"])
+        print("ok:", row["id"], row["created_at"].astimezone(timezone.utc))
+    except ValueError:
+        print("invalid timestamp:", row["id"])`
+  },
+  6: {
+    title: "Write validation rules",
+    goal: "Return errors instead of crashing on bad records.",
+    code: `def validate(row):
+    errors = []
+    if not row.get("id"):
+        errors.append("missing id")
+    if row.get("amount", 0) < 0:
+        errors.append("negative amount")
+    return errors
+
+row = {"id": 7, "amount": -50}
+print(validate(row))`
+  },
+  7: {
+    title: "Build a tiny ingestion check",
+    goal: "Separate accepted rows from rejected rows.",
+    code: `rows = [
+    {"id": 1, "amount": 1200},
+    {"id": None, "amount": 900},
+    {"id": 3, "amount": -10},
+]
+
+accepted = []
+rejected = []
+
+for row in rows:
+    if row["id"] is None or row["amount"] < 0:
+        rejected.append(row)
+    else:
+        accepted.append(row)
+
+print("accepted:", accepted)
+print("rejected:", rejected)`
+  },
+  8: {
+    title: "Loop over input files",
+    goal: "Practice the shape of a batch job over a folder.",
+    code: `from pathlib import Path
+
+input_folder = Path("raw")
+for path in sorted(input_folder.glob("*.csv")):
+    print("would ingest:", path.name)
+
+# Create a raw folder later and add CSV files to make this real.`
+  },
+  9: {
+    title: "Make reruns safe",
+    goal: "Use a stable key so the same record is not loaded twice.",
+    code: `incoming = [
+    {"id": 1, "amount": 1200},
+    {"id": 1, "amount": 1200},
+    {"id": 2, "amount": 900},
+]
+
+loaded_by_id = {}
+for row in incoming:
+    loaded_by_id[row["id"]] = row
+
+print(list(loaded_by_id.values()))`
+  },
+  10: {
+    title: "Deduplicate by key",
+    goal: "Keep the latest version when the same id appears twice.",
+    code: `rows = [
+    {"id": 1, "updated_at": "2026-05-16", "amount": 100},
+    {"id": 1, "updated_at": "2026-05-17", "amount": 120},
+    {"id": 2, "updated_at": "2026-05-17", "amount": 90},
+]
+
+latest = {}
+for row in rows:
+    old = latest.get(row["id"])
+    if old is None or row["updated_at"] > old["updated_at"]:
+        latest[row["id"]] = row
+
+print(list(latest.values()))`
+  },
+  11: {
+    title: "Track a checkpoint",
+    goal: "Only ingest records newer than the last successful timestamp.",
+    code: `last_loaded_at = "2026-05-16T00:00:00"
+rows = [
+    {"id": 1, "updated_at": "2026-05-15T12:00:00"},
+    {"id": 2, "updated_at": "2026-05-17T09:00:00"},
+]
+
+new_rows = [row for row in rows if row["updated_at"] > last_loaded_at]
+new_checkpoint = max(row["updated_at"] for row in new_rows)
+
+print(new_rows)
+print("new checkpoint:", new_checkpoint)`
+  },
+  12: {
+    title: "Quarantine bad rows",
+    goal: "Keep bad data visible instead of silently dropping it.",
+    code: `rows = [{"id": 1, "amount": 10}, {"id": 2, "amount": -5}]
+good_rows = []
+error_rows = []
+
+for row in rows:
+    if row["amount"] < 0:
+        error_rows.append({"row": row, "error": "negative amount"})
+    else:
+        good_rows.append(row)
+
+print("good:", good_rows)
+print("errors:", error_rows)`
+  },
+  13: {
+    title: "Print a run summary",
+    goal: "Record row counts so pipeline behavior is inspectable.",
+    code: `run_summary = {
+    "run_id": "2026-05-17-001",
+    "rows_read": 100,
+    "rows_loaded": 96,
+    "rows_rejected": 4,
+    "seconds": 2.4,
+}
+
+for key, value in run_summary.items():
+    print(f"{key}: {value}")`
+  },
+  14: {
+    title: "Wrap ingestion in a function",
+    goal: "Make the batch pipeline easy to rerun and test.",
+    code: `def ingest(rows):
+    accepted = []
+    rejected = []
+    for row in rows:
+        if row.get("id") and row.get("amount", 0) >= 0:
+            accepted.append(row)
+        else:
+            rejected.append(row)
+    return accepted, rejected
+
+accepted, rejected = ingest([{"id": 1, "amount": 9}, {"id": None, "amount": 3}])
+print(accepted, rejected)`
+  },
+  15: {
+    title: "Fetch paginated API data",
+    goal: "Model API ingestion as repeated page requests.",
+    code: `def fake_api(page):
+    pages = {
+        1: {"records": [{"id": 1}], "next_page": 2},
+        2: {"records": [{"id": 2}], "next_page": None},
+    }
+    return pages[page]
+
+page = 1
+records = []
+while page is not None:
+    response = fake_api(page)
+    records.extend(response["records"])
+    page = response["next_page"]
+
+print(records)`
+  },
+  16: {
+    title: "Write an incremental SQL extract",
+    goal: "Use a timestamp condition to avoid full table reloads.",
+    code: `last_loaded_at = "2026-05-16T00:00:00"
+
+query = f"""
+SELECT id, amount, updated_at
+FROM orders
+WHERE updated_at > '{last_loaded_at}'
+ORDER BY updated_at
+"""
+
+print(query.strip())`
+  },
+  17: {
+    title: "Apply CDC events",
+    goal: "Turn inserts, updates, and deletes into target-table state.",
+    code: `events = [
+    {"op": "insert", "id": 1, "amount": 100},
+    {"op": "update", "id": 1, "amount": 120},
+    {"op": "delete", "id": 1},
+]
+
+table = {}
+for event in events:
+    if event["op"] == "delete":
+        table.pop(event["id"], None)
+    else:
+        table[event["id"]] = event
+
+print(table)`
+  },
+  18: {
+    title: "Represent a small DAG",
+    goal: "Write task dependencies before using an orchestration tool.",
+    code: `dag = {
+    "extract": [],
+    "validate": ["extract"],
+    "load": ["validate"],
+    "profile": ["load"],
+}
+
+for task, depends_on in dag.items():
+    print(task, "depends on", depends_on)`
+  },
+  19: {
+    title: "Plan a backfill range",
+    goal: "Generate daily partitions that need to be reloaded.",
+    code: `from datetime import date, timedelta
+
+start = date(2026, 5, 10)
+end = date(2026, 5, 17)
+current = start
+
+while current <= end:
+    print("reload partition:", current.isoformat())
+    current += timedelta(days=1)`
+  },
+  20: {
+    title: "Create run metadata",
+    goal: "Store metadata that can support debugging and discovery.",
+    code: `metadata = {
+    "dataset": "orders",
+    "source": "api/orders",
+    "schema": ["id", "amount", "updated_at"],
+    "rows_loaded": 96,
+    "profile_created": True,
+}
+
+print(metadata)`
+  },
+  21: {
+    title: "Combine orchestration steps",
+    goal: "Sketch the ingestion system as ordered functions.",
+    code: `def extract():
+    return [{"id": 1, "amount": 100}]
+
+def validate(rows):
+    return [row for row in rows if row["amount"] >= 0]
+
+def load(rows):
+    print("loaded:", rows)
+
+rows = extract()
+clean_rows = validate(rows)
+load(clean_rows)`
+  },
+  22: {
+    title: "Process events one by one",
+    goal: "Treat a list as a beginner stream.",
+    code: `events = [
+    {"id": 1, "type": "click"},
+    {"id": 2, "type": "purchase"},
+    {"id": 3, "type": "click"},
+]
+
+for event in events:
+    print("processing event", event["id"], event["type"])`
+  },
+  23: {
+    title: "Store an offset",
+    goal: "Resume stream processing from the last completed position.",
+    code: `events = ["a", "b", "c", "d"]
+last_committed_offset = 1
+
+for offset, event in enumerate(events):
+    if offset <= last_committed_offset:
+        continue
+    print("process:", offset, event)
+    last_committed_offset = offset
+
+print("checkpoint:", last_committed_offset)`
+  },
+  24: {
+    title: "See duplicate risk",
+    goal: "Understand why at-least-once processing needs idempotent writes.",
+    code: `events = [{"id": 1}, {"id": 2}, {"id": 2}]
+target = {}
+
+for event in events:
+    target[event["id"]] = event
+
+print("loaded once per id:", list(target.values()))`
+  },
+  25: {
+    title: "Use a dead-letter list",
+    goal: "Route invalid events away from the main stream.",
+    code: `events = [{"id": 1, "amount": 10}, {"id": 2, "amount": "bad"}]
+loaded = []
+dead_letter = []
+
+for event in events:
+    if isinstance(event["amount"], int):
+        loaded.append(event)
+    else:
+        dead_letter.append({"event": event, "reason": "amount is not int"})
+
+print("loaded:", loaded)
+print("DLQ:", dead_letter)`
+  },
+  26: {
+    title: "Compare event time and arrival order",
+    goal: "See why streaming systems need time semantics.",
+    code: `events = [
+    {"id": 1, "event_time": "10:05", "arrival": 1},
+    {"id": 2, "event_time": "10:00", "arrival": 2},
+]
+
+print("arrival order:", [event["id"] for event in events])
+by_event_time = sorted(events, key=lambda event: event["event_time"])
+print("event-time order:", [event["id"] for event in by_event_time])`
+  },
+  27: {
+    title: "Measure simple throughput",
+    goal: "Compute records per second for a tiny processor.",
+    code: `import time
+
+events = list(range(10000))
+start = time.perf_counter()
+count = 0
+for event in events:
+    count += 1
+seconds = time.perf_counter() - start
+
+print("events per second:", round(count / seconds))`
+  },
+  28: {
+    title: "Build a mini stream processor",
+    goal: "Combine offsets, validation, and a dead-letter queue.",
+    code: `events = [{"id": 1, "ok": True}, {"id": 2, "ok": False}]
+offset = -1
+loaded = []
+dlq = []
+
+for index, event in enumerate(events):
+    if event["ok"]:
+        loaded.append(event)
+    else:
+        dlq.append(event)
+    offset = index
+
+print("offset:", offset)
+print("loaded:", loaded)
+print("dlq:", dlq)`
+  },
+  29: {
+    title: "Profile columns",
+    goal: "Compute summaries that help quality checks and discovery.",
+    code: `rows = [
+    {"city": "Tokyo", "amount": 100},
+    {"city": "Tokyo", "amount": None},
+    {"city": "Osaka", "amount": 80},
+]
+
+cities = [row["city"] for row in rows]
+amounts = [row["amount"] for row in rows]
+
+print("unique cities:", len(set(cities)))
+print("null amount rate:", amounts.count(None) / len(amounts))`
+  },
+  30: {
+    title: "Detect schema drift",
+    goal: "Compare yesterday's fields with today's fields.",
+    code: `old_schema = {"id", "amount", "updated_at"}
+new_schema = {"id", "amount", "updated_at", "currency"}
+
+added = new_schema - old_schema
+removed = old_schema - new_schema
+
+print("added:", added)
+print("removed:", removed)`
+  },
+  31: {
+    title: "Calculate column overlap",
+    goal: "Use Jaccard similarity to find related columns.",
+    code: `orders_user_ids = {1, 2, 3, 4}
+payments_user_ids = {3, 4, 5}
+
+intersection = orders_user_ids & payments_user_ids
+union = orders_user_ids | payments_user_ids
+jaccard = len(intersection) / len(union)
+
+print("similarity:", round(jaccard, 2))`
+  },
+  32: {
+    title: "Create a small signature",
+    goal: "Summarize a column with hashed sample values.",
+    code: `values = ["Tokyo", "Osaka", "Tokyo", "Nagoya", "Kyoto"]
+
+signature = sorted({hash(value) % 100 for value in values})[:3]
+
+print("compact signature:", signature)`
+  },
+  33: {
+    title: "Use sampling for change detection",
+    goal: "Decide if re-profiling may be needed.",
+    code: `old_sample = {"Tokyo", "Osaka", "Kyoto"}
+new_sample = {"Tokyo", "Osaka", "Sapporo"}
+
+changed = old_sample.symmetric_difference(new_sample)
+change_rate = len(changed) / len(old_sample | new_sample)
+
+print("change rate:", round(change_rate, 2))
+print("reprofile:", change_rate > 0.25)`
+  },
+  34: {
+    title: "Record experiment metrics",
+    goal: "Make a thesis experiment measurable.",
+    code: `result = {
+    "method": "incremental_load",
+    "runtime_seconds": 2.8,
+    "duplicates": 0,
+    "missing_records": 1,
+    "schema_alerts": 2,
+}
+
+for metric, value in result.items():
+    print(metric, value)`
+  },
+  35: {
+    title: "Draft a coding-wise proposal",
+    goal: "Turn the idea into a small system and evaluation plan.",
+    code: `proposal = {
+    "topic": "schema drift detection for CSV ingestion",
+    "prototype": "Python ingestion script with validation",
+    "baseline": "load without drift checks",
+    "metric": "drift detection precision and false alarms",
+    "limitation": "small synthetic dataset",
+}
+
+print(proposal)`
+  }
+};
+
 const dataIngestionLibrary = [
   {
     title: "Aurum: A Data Discovery System",
@@ -3471,6 +3978,7 @@ const tracks = {
     lessons: dataIngestionLessons,
     studyMaterials: dataIngestionStudyMaterials,
     quizzes: dataIngestionQuizzes,
+    codeTasks: dataIngestionCodeTasks,
     library: dataIngestionLibrary,
     libraryTitle: "Data Ingestion thesis library",
     libraryIntro: "Coding and research sources for batch ingestion, streaming ingestion, CDC, validation, orchestration, profiling, data discovery, and incremental maintenance."

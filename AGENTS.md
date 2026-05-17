@@ -92,6 +92,7 @@ Important style areas:
 - Lesson layout: `.today-layout`, `.lesson-panel`, `.note-panel`
 - Study content: `.study-panel`
 - Mini lab: `.lab-panel`
+- Daily code task: `.code-task-panel`
 - Quiz: `.quiz-panel`, `.choice-button`
 - Review queue: `.review-panel`
 - Daily checklist: `.checklist-panel`
@@ -116,6 +117,7 @@ Main exported globals:
 - `dataIngestionLessons`
 - `dataIngestionStudyMaterials`
 - `dataIngestionQuizzes`
+- `dataIngestionCodeTasks`
 - `blockchainConsensusLessons`
 - `blockchainConsensusStudyMaterials`
 - `blockchainConsensusQuizzes`
@@ -142,6 +144,7 @@ Category track focus:
 - Data Lake: object storage, Parquet, partitioning, metadata, lakehouse table formats.
 - Blockchain Consensus: blocks, forks, finality, PoW, PoS, BFT, safety and liveness.
 - Each track also owns its own `library`, `libraryTitle`, and `libraryIntro`.
+- Data Ingestion also owns `codeTasks`, one small Python-style coding task per lesson.
 
 ### `app.js`
 
@@ -171,6 +174,7 @@ Each lesson includes:
 - CS angle.
 - 2 / 5 / 3 minute task cards.
 - Mini CS lab.
+- Daily code task for Data Ingestion lessons.
 - Mini quiz.
 - Review queue.
 - Daily checklist.
@@ -190,6 +194,7 @@ Selecting a category changes:
 - Study material.
 - Mini quiz.
 - Mini CS lab.
+- Daily code task, when the selected category provides one.
 - Daily notes.
 - Completion progress.
 - Review queue.
