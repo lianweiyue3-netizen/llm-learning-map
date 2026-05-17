@@ -121,16 +121,6 @@
                 <ol id="labSteps"></ol>
               </section>
 
-              <section id="codeTaskPanel" class="code-task-panel" aria-label="Daily code task" hidden>
-                <div class="code-task-heading">
-                  <span>Daily code task</span>
-                  <strong>5 min</strong>
-                </div>
-                <h4 id="codeTaskTitle"></h4>
-                <p id="codeTaskGoal"></p>
-                <pre><code id="codeTaskSnippet"></code></pre>
-              </section>
-
               <section class="quiz-panel" aria-label="Mini quiz">
                 <div class="quiz-heading">
                   <span>Mini quiz</span>
@@ -185,6 +175,16 @@
               <label for="dailyNote">Write 2-3 sentences. Tiny notes become your literature review later.</label>
               <textarea id="dailyNote" rows="9" placeholder="Example: Today I learned that LLMs predict tokens, not truth. A possible thesis question is..."></textarea>
               <p id="saveStatus" class="save-status">Autosaves in this browser.</p>
+
+              <section id="codeTaskPanel" class="code-task-panel" aria-label="Daily code reading" hidden>
+                <div class="code-task-heading">
+                  <span>Code reading</span>
+                  <strong>read only</strong>
+                </div>
+                <h4 id="codeTaskTitle"></h4>
+                <p id="codeTaskGoal"></p>
+                <pre><code id="codeTaskSnippet"></code></pre>
+              </section>
             </section>
           </div>
         </section>

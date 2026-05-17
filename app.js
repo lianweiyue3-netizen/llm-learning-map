@@ -480,7 +480,7 @@ function renderCodeTask(lesson) {
   elements.codeTaskPanel.hidden = !task;
   if (!task) return;
   elements.codeTaskTitle.textContent = task.title;
-  elements.codeTaskGoal.textContent = task.goal;
+  elements.codeTaskGoal.textContent = task.explanation || task.goal;
   elements.codeTaskSnippet.textContent = task.code;
 }
 

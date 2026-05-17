@@ -3780,6 +3780,48 @@ print(proposal)`
   }
 };
 
+const dataIngestionCodeExplanations = {
+  1: "This code creates three records as Python dictionaries. Each dictionary is one row-like unit of data, and the loop reads the same fields from every record.",
+  2: "The schema object says which fields should exist and which Python type each field should have. The assertions stop the pipeline early if a row does not match the expected structure.",
+  3: "The CSV text is parsed into dictionaries, one dictionary per row. The missing-value check shows why ingestion should inspect data before accepting it.",
+  4: "The JSON string becomes a nested Python dictionary. The flat object pulls out only the fields the pipeline wants to load downstream.",
+  5: "The loop tries to convert timestamp text into datetime objects. Bad timestamp text is caught as an error instead of silently entering the dataset.",
+  6: "The validate function returns a list of problems for one row. Returning errors is useful because the pipeline can explain why a record was rejected.",
+  7: "The loop separates rows into accepted and rejected lists. This is the basic pattern behind validation, quarantine files, and dead-letter queues.",
+  8: "The Path object points to a raw input folder. The glob call finds every CSV file, which is how a batch job can process many input files consistently.",
+  9: "The dictionary uses record id as a stable key. If the same id appears twice, the later assignment replaces the earlier one, preventing duplicate output by id.",
+  10: "The latest dictionary keeps only the newest row for each id. The timestamp comparison decides whether an incoming duplicate is newer than the stored version.",
+  11: "The checkpoint stores the last successful timestamp. The filter keeps only rows newer than that checkpoint, which is the core idea of incremental ingestion.",
+  12: "Good rows and error rows are stored separately. This keeps bad data visible for debugging without blocking every valid row from loading.",
+  13: "The run summary records operational facts about one pipeline run. Counts and runtime make ingestion easier to debug and compare later.",
+  14: "The ingest function makes the pipeline behavior reusable. It takes rows as input and returns accepted and rejected rows as separate outputs.",
+  15: "The fake API returns one page at a time. The while loop follows next_page until no pages remain, which is the basic shape of paginated API ingestion.",
+  16: "The SQL query selects only rows updated after the checkpoint. This is a common database ingestion pattern for incremental extracts.",
+  17: "Each CDC event changes the target table state. Inserts and updates write a row, while deletes remove it, so the target follows source changes over time.",
+  18: "The DAG dictionary describes task dependencies. For example, load should not run before validate because bad rows should be checked first.",
+  19: "The loop generates one date partition at a time. Backfill uses this pattern to reload historical days after a bug or late data issue.",
+  20: "This metadata describes the dataset, source, schema, and run result. Metadata like this can support debugging, lineage, and data discovery.",
+  21: "The small pipeline is split into extract, validate, and load functions. Separating steps makes the data flow easier to test and explain.",
+  22: "The loop processes events one by one, like a simple stream. Real streaming systems do this continuously instead of stopping after a fixed list.",
+  23: "The offset records the last processed position. If the process restarts, it can skip older events and continue from the next offset.",
+  24: "The target dictionary is keyed by event id. Re-processing id 2 does not create a second output row, which is one way to handle duplicate delivery.",
+  25: "Valid events go to loaded and invalid events go to the dead-letter list. This protects the main pipeline while preserving failed events for inspection.",
+  26: "Arrival order and event-time order can differ. Streaming systems need this distinction because late events can change the meaning of time-based results.",
+  27: "The code measures how many events a loop can process per second. Throughput is one practical performance metric for ingestion systems.",
+  28: "This mini processor combines validation, offset tracking, and a dead-letter queue. Those three ideas are common building blocks in reliable streaming ingestion.",
+  29: "The code computes simple column profiles: unique city count and null rate. Profiles summarize data so humans and algorithms can understand dataset quality.",
+  30: "Old and new schemas are compared as sets of field names. Added and removed fields are schema drift signals that an ingestion system should notice.",
+  31: "Jaccard similarity compares overlap between two sets. In data discovery, overlap can suggest that two columns may be related or joinable.",
+  32: "The signature stores a few hashed values instead of every original value. A compact signature is cheaper to compare than a full column.",
+  33: "The old and new samples are compared with symmetric difference. A high change rate can trigger re-profiling without reading the full dataset first.",
+  34: "The result dictionary stores experiment metrics. A thesis needs these measurements to support claims about correctness, cost, or reliability.",
+  35: "The proposal object names a topic, prototype, baseline, metric, and limitation. This turns coding practice into a research plan."
+};
+
+Object.entries(dataIngestionCodeExplanations).forEach(([id, explanation]) => {
+  dataIngestionCodeTasks[id].explanation = explanation;
+});
+
 const dataIngestionLibrary = [
   {
     title: "Aurum: A Data Discovery System",
